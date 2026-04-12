@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Leonidas corretor - Consultor imobiliário em São Paulo</title>
+  <title>Dashboard - Leonidas corretor</title>
   <style>
     :root {
       --bg: #020617;
@@ -50,10 +50,10 @@
       box-shadow:
         0 32px 90px rgba(15, 23, 42, 0.9),
         0 0 0 1px rgba(15, 23, 42, 0.9);
-      padding: 28px 28px 24px;
+      padding: 24px 24px 20px;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 18px;
     }
 
     .header {
@@ -66,7 +66,7 @@
     .header-left {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       min-width: 0;
     }
 
@@ -119,183 +119,52 @@
     .brand-subtitle {
       font-size: 12px;
       color: #9ca3af;
-      max-width: 280px;
+      max-width: 260px;
     }
 
     .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      font-size: 12px;
+      color: #64748b;
     }
 
-    .header-cta {
-      font-size: 13px;
-      padding: 7px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--accent-strong);
-      background: linear-gradient(135deg, var(--accent-soft), rgba(15, 23, 42, 0.9));
-      color: #bbf7d0;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.9),
-        0 12px 30px rgba(22, 163, 74, 0.35);
-      transition: all 0.16s ease-out;
-      white-space: nowrap;
-    }
-
-    .header-cta:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.9),
-        0 14px 34px rgba(22, 163, 74, 0.5);
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(15, 23, 42, 0.95));
-    }
-
-    .main {
-      display: flex;
-      flex-direction: column;
-      gap: 22px;
-    }
-
-    .hero {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .hero-title {
-      font-size: 26px;
-      line-height: 1.15;
-      letter-spacing: -0.03em;
-      color: #f9fafb;
-    }
-
-    .hero-subtitle {
-      font-size: 14px;
-      line-height: 1.6;
-      color: #9ca3af;
-      max-width: 640px;
-    }
-
-    .hero-actions {
-      margin-top: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .primary-button,
-    .secondary-button {
-      font-size: 14px;
-      padding: 9px 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.15s ease-out;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .primary-button {
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      color: #ecfdf5;
-      border-color: rgba(21, 128, 61, 0.85);
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.9),
-        0 14px 35px rgba(22, 163, 74, 0.45);
-    }
-
-    .primary-button:hover {
-      background: linear-gradient(135deg, #22c55e, #15803d);
-      transform: translateY(-1px);
-      box-shadow:
-        0 0 0 1px rgba(15, 23, 42, 0.9),
-        0 16px 40px rgba(22, 163, 74, 0.6);
-    }
-
-    .secondary-button {
-      background: rgba(15, 23, 42, 0.8);
-      color: #e5e7eb;
-    }
-
-    .secondary-button:hover {
-      background: rgba(15, 23, 42, 1);
-      border-color: rgba(148, 163, 184, 0.7);
-      transform: translateY(-1px);
-    }
-
-    .highlights {
-      border-radius: 20px;
-      border: 1px solid var(--border-subtle);
-      background: radial-gradient(circle at top left, rgba(34, 197, 94, 0.03), transparent 55%), rgba(15, 23, 42, 0.92);
-      padding: 14px 16px 12px;
-      display: flex;
-      flex-direction: column;
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
     }
 
-    .section-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #e5e7eb;
-    }
-
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-
     .card {
-      border-radius: 14px;
-      border: 1px solid rgba(31, 41, 55, 0.8);
+      border-radius: 16px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
       background: radial-gradient(circle at top, rgba(17, 24, 39, 0.9), rgba(15, 23, 42, 1));
-      padding: 10px 11px;
+      padding: 12px 13px;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
     }
 
-    .card-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #e5e7eb;
-    }
-
-    .card-text {
-      font-size: 12px;
-      line-height: 1.6;
+    .card-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
       color: #9ca3af;
     }
 
-    .cta-final {
-      border-radius: 18px;
-      border: 1px dashed rgba(34, 197, 94, 0.6);
-      background: radial-gradient(circle at top, rgba(34, 197, 94, 0.09), transparent 55%), rgba(6, 95, 70, 0.16);
-      padding: 12px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: flex-start;
+    .card-value {
+      font-size: 20px;
+      font-weight: 600;
+      color: #e5e7eb;
     }
 
-    .cta-text {
-      font-size: 13px;
-      color: #d1fae5;
-      max-width: 520px;
+    .card-note {
+      font-size: 11px;
+      color: #6b7280;
     }
 
     .footer {
       border-top: 1px solid rgba(31, 41, 55, 0.9);
       padding-top: 10px;
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     .footer-text {
@@ -309,33 +178,12 @@
       }
 
       .wrapper-inner {
-        padding: 20px 16px 18px;
+        padding: 18px 16px 16px;
         border-radius: 24px;
       }
 
-      .header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-
-      .header-right {
-        width: 100%;
-        justify-content: flex-start;
-      }
-
-      .hero-title {
-        font-size: 22px;
-      }
-
-      .cards-grid {
+      .dashboard-grid {
         grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .hero-title {
-        font-size: 20px;
       }
     }
   </style>
@@ -354,66 +202,35 @@
           </div>
           <div class="brand-text">
             <div class="brand-name">Leonidas corretor</div>
-            <div class="brand-subtitle">Consultor imobiliário em São Paulo</div>
+            <div class="brand-subtitle">Dashboard de informações</div>
           </div>
         </div>
         <div class="header-right">
-          <a href="https://wa.me/5511999999999" class="header-cta">Falar no WhatsApp</a>
+          Atualizado manualmente
         </div>
       </header>
 
-      <main class="main">
-        <section class="hero">
-          <h1 class="hero-title">
-            Encontre seu próximo imóvel com segurança, estratégia e atendimento personalizado
-          </h1>
-          <p class="hero-subtitle">
-            Atuação focada em São Paulo, acompanhando você em todas as etapas: da escolha do imóvel até a assinatura do contrato.
-          </p>
-          <div class="hero-actions">
-            <a href="https://wa.me/5511999999999" class="primary-button">Quero falar sobre um imóvel</a>
-            <a href="#imoveis" class="secondary-button">Ver oportunidades</a>
-          </div>
-        </section>
-
-        <section class="highlights" id="imoveis">
-          <h2 class="section-title">Principais oportunidades</h2>
-          <div class="cards-grid">
-            <article class="card">
-              <h3 class="card-title">Lançamentos em São Paulo</h3>
-              <p class="card-text">
-                Empreendimentos com condições especiais, entrada facilitada e suporte completo no processo de financiamento.
-              </p>
-            </article>
-            <article class="card">
-              <h3 class="card-title">Imóveis prontos para morar</h3>
-              <p class="card-text">
-                Opções selecionadas em regiões estratégicas, com infraestrutura completa e potencial de valorização.
-              </p>
-            </article>
-            <article class="card">
-              <h3 class="card-title">Atendimento consultivo</h3>
-              <p class="card-text">
-                Entendimento do seu momento de vida, análise de perfil e acompanhamento em cada visita e negociação.
-              </p>
-            </article>
-          </div>
-        </section>
-
-        <section class="cta-final">
-          <h2 class="section-title">Vamos falar sobre o imóvel ideal para você?</h2>
-          <p class="cta-text">
-            Me chame no WhatsApp e conte em qual momento você está: comprando, investindo ou trocando de imóvel.
-          </p>
-          <a href="https://wa.me/5511999999999" class="primary-button">
-            Falar com Leonidas no WhatsApp
-          </a>
-        </section>
-      </main>
+      <section class="dashboard-grid">
+        <div class="card">
+          <div class="card-label">Imóveis em atendimento</div>
+          <div class="card-value">0</div>
+          <div class="card-note">Atualize esse número no código</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Leads na semana</div>
+          <div class="card-value">0</div>
+          <div class="card-note">Use como painel rápido de WhatsApp / CRM</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Visitas agendadas</div>
+          <div class="card-value">0</div>
+          <div class="card-note">Para você preencher conforme a agenda</div>
+        </div>
+      </section>
 
       <footer class="footer">
         <p class="footer-text">
-          © 2026 Leonidas corretor · Consultor imobiliário em São Paulo
+          © 2026 Leonidas corretor
         </p>
       </footer>
 
