@@ -652,6 +652,51 @@
 
           funnelContainer.appendChild(row);
         });
+                // gráfico de leads ativos por status (sem Perdido/Descartado)
+        const ativosPorStatus = {};
+        linhasTabela.forEach((linha) => {
+          const s = linha.status || 'Sem status';
+          ativosPorStatus[s] = (ativosPorStatus[s] || 0) + 1;
+        });
+
+        const ativosChart = document.getElementById('ativos-chart');
+        ativosChart.innerHTML = '';
+
+        const totalAtivosStatus = Object.values(ativosPorStatus).reduce((acc, v) => acc + v, 0) || 1;
+        const ativosOrdenados = Object.entries(ativosPorStatus).sort((a, b) => b[1] - a[1]);
+
+        ativosOrdenados.forEach(([statusLabel, qtd]) => {
+          const row = document.createElement('div');
+          row.className = 'funnel-row';
+
+          const label = document.createElement('div');
+          label.className = 'funnel-label';
+          label.textContent = statusLabel;
+
+          const barOuter = document.createElement('div');
+          barOuter.className = 'funnel-bar-outer';
+
+          const barInner = document.createElement('div');
+          barInner.className = 'funnel-bar-inner';
+
+          const perc = (qtd / totalAtivosStatus) || 0;
+          requestAnimationFrame(() => {
+            barInner.style.transform = 'scaleX(' + perc.toFixed(3) + ')';
+          });
+
+          barOuter.appendChild(barInner);
+
+          const value = document.createElement('div');
+          value.className = 'funnel-value';
+          value.textContent = qtd + ' · ' + Math.round(perc * 100) + '%';
+
+          row.appendChild(label);
+          row.appendChild(barOuter);
+          row.appendChild(value);
+
+          ativosChart.appendChild(row);
+        });
+
         const tbody = document.getElementById('tbody-leads');
         tbody.innerHTML = '';
       })
