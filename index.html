@@ -114,577 +114,81 @@
   <div class="wrapper">
     <div class="wrapper-inner">
 
-      <header>
-        <div class="brand">
-          <div class="brand-logo">
-            <img src="https://LeonidasCorretor.github.io/Logo (2) (1) (1).png" alt="Corretor de Leônidas" />
+      <header class="header">
+        <div class="header-left">
+          <div class="brand-avatar-wrapper">
+            <div class="brand-logo">
+              <img src="https://LeonidasCorretor.github.io/Logo (2) (1) (1).png"
+                   alt="Leonidas Corretor" />
+            </div>
           </div>
-          <div>
-            <div class="brand-text-main">Corretor de Leônidas</div>
-            <div class="brand-text-sub">Funil de vendas · Imóveis Cury</div>
+          <div class="brand-text">
+            <div class="brand-name">Leonidas corretor</div>
+            <div class="brand-subtitle">Consultor imobiliário em São Paulo</div>
           </div>
         </div>
-        <div class="time-info">
-          Atualizado em <span id="info-data"></span><br />
-          Origem: <span>Google Sheets · Leads Cury</span>
+        <div class="header-right">
+          <a href="https://wa.me/5511999999999" class="header-cta">Falar no WhatsApp</a>
         </div>
       </header>
 
-      <h2 class="section-title">Visão geral</h2>
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-
-    .card {
-      background: #020617;
-      border-radius: 12px;
-      padding: 12px;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .card-main {
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-      margin-bottom: 2px;
-    }
-
-    .card-main-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--gold-soft);
-    }
-
-    .card-main-suffix {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .card-sub {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .card-sub strong {
-      color: var(--gold);
-      font-weight: 500;
-    }
-
-    .layout-grid {
-      display: grid;
-      grid-template-columns: 0.68fr 0.32fr;
-      gap: 14px;
-      margin-bottom: 12px;
-    }
-
-    .panel {
-      background: var(--bg-card-alt);
-      border-radius: 14px;
-      padding: 12px 14px 10px;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .panel-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .panel-title {
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--gold);
-    }
-
-    .panel-subtitle {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .funnel-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-
-    .funnel-label {
-      width: 122px;
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .funnel-bar-outer {
-      flex: 1;
-      height: 14px;
-      border-radius: 999px;
-      background: #020617;
-      border: 1px solid #111827;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .funnel-bar-inner {
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: linear-gradient(90deg, rgba(207, 181, 59, 0.05), rgba(207, 181, 59, 0.9));
-      box-shadow: 0 0 25px rgba(250, 204, 21, 0.55);
-      transform-origin: left center;
-      transform: scaleX(0);
-      transition: transform 0.8s ease-out;
-    }
-
-    .funnel-value {
-      width: 84px;
-      font-size: 11px;
-      text-align: right;
-      color: var(--gold-soft);
-    }
-
-    .table-wrapper {
-      max-height: 220px;
-      overflow-y: hidden;
-      overflow-x: auto;
-      border-radius: 10px;
-      border: 1px solid rgba(31, 41, 55, 1);
-      background: radial-gradient(circle at top left, #020617 0, #020617 45%, #020617 100%);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 11px;
-      table-layout: auto;
-    }
-
-    thead {
-      background: rgba(15, 23, 42, 0.98);
-      position: sticky;
-      top: 0;
-      z-index: 2;
-    }
-
-    thead th {
-      padding: 6px 8px;
-      text-align: left;
-      font-weight: 500;
-      color: var(--gold-soft);
-      border-bottom: 1px solid rgba(31, 41, 55, 1);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 10px;
-      white-space: nowrap;
-    }
-
-    tbody {
-      display: block;
-      max-height: 222px;
-      overflow-y: auto;
-    }
-
-    tbody tr {
-      display: table;
-      width: 100%;
-      table-layout: fixed;
-      background: transparent;
-    }
-
-    td {
-      padding: 5px 8px;
-      border-bottom: 1px solid rgba(15, 23, 42, 1);
-      color: #e5e7eb;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .footer-info {
-      margin-top: 10px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .footer-info span {
-      color: var(--gold-soft);
-    }
-
-    @media (max-width: 1024px) {
-      .wrapper {
-        max-width: 980px;
-      }
-      .cards-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .layout-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .wrapper {
-        margin: 0;
-        border-radius: 0;
-        max-width: 100%;
-        height: 100vh;
-        padding: 10px 10px 14px;
-      }
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-      }
-      .cards-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-      .layout-grid {
-        gap: 10px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="wrapper">
-    <div class="wrapper-inner">
-      <header>
-        <div class="brand">
-          <div class="Logo (2) (1) (1).png">
-            CL
-          </div>
-          <div>
-            
-            <div class="brand-text-main">Corretor de Leônidas</div>
-            <div class="brand-text-sub">Funil de vendas · Imóveis Cury</div>
-          </div>
-        </div>
-        <div class="time-info">
-          Atualizado em <span id="info-data"></span><br />
-          Origem: <span>Google Sheets · Leads Cury</span>
-        </div>
-      </header>
-
-      <h2 class="section-title">Visão geral</h2>
-
-      <section class="cards-grid">
-        <article class="card">
-          <div class="card-label">Total de leads</div>
-          <div class="card-main">
-            <div class="card-main-value" id="card-total-leads">–</div>
-          </div>
-          <div class="card-sub">
-            Últimos <strong>12 meses</strong>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-label">Leads (30 dias)</div>
-          <div class="card-main">
-            <div class="card-main-value" id="card-leads-novos">–</div>
-          </div>
-          <div class="card-sub">
-            Janela móvel de <strong>30 dias</strong>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-label">VGV potencial</div>
-          <div class="card-main">
-            <div class="card-main-value" id="card-vgv">–</div>
-            <div class="card-main-suffix">estimado</div>
-          </div>
-          <div class="card-sub">
-            Baseado na coluna <strong>Valor previsto</strong>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-label">Taxa de conversão</div>
-          <div class="card-main">
-            <div class="card-main-value" id="card-conversao">–</div>
-            <div class="card-main-suffix">/ leads</div>
-          </div>
-          <div class="card-sub">
-            <span id="card-vendas-ganhas">– vendas ganhas</span>
-          </div>
-        </article>
-      </section>
-
-      <div class="layout-grid">
-        <section class="panel">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">Funil por status</div>
-              <div class="panel-subtitle">Distribuição dos leads por etapa</div>
-            </div>
-          </div>
-          <div id="funnel-container">
+      <main class="main">
+        <section class="hero">
+          <h1 class="hero-title">
+            Encontre seu próximo imóvel com segurança, estratégia e atendimento personalizado
+          </h1>
+          <p class="hero-subtitle">
+            Atuação focada em São Paulo, acompanhando você em todas as etapas: da escolha do imóvel até a assinatura do contrato.
+          </p>
+          <div class="hero-actions">
+            <a href="https://wa.me/5511999999999" class="primary-button">Quero falar sobre um imóvel</a>
+            <a href="#imoveis" class="secondary-button">Ver oportunidades</a>
           </div>
         </section>
 
-        <section class="panel">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">Resumo rápido</div>
-              <div class="panel-subtitle">Temperatura da base</div>
-            </div>
-          </div>
-          <div>
-            <p style="font-size: 11px; color: var(--text-muted); margin: 0 0 6px;">
-              Leads ativos: <span id="info-ativos">–</span>
-            </p>
-            <p style="font-size: 11px; color: var(--text-muted); margin: 0 0 6px;">
-              Tickets altos (&gt; R$ 800.000): <span id="info-ticket-alto">–</span>
-            </p>
-            <p style="font-size: 11px; color: var(--text-muted); margin: 0;">
-              Último lead em: <span id="info-ultimo-lead">–</span>
-            </p>
+        <section class="highlights" id="imoveis">
+          <h2 class="section-title">Principais oportunidades</h2>
+          <div class="cards-grid">
+            <article class="card">
+              <h3 class="card-title">Lançamentos em São Paulo</h3>
+              <p class="card-text">
+                Empreendimentos com condições especiais, entrada facilitada e suporte completo no processo de financiamento.
+              </p>
+            </article>
+            <article class="card">
+              <h3 class="card-title">Imóveis prontos para morar</h3>
+              <p class="card-text">
+                Opções selecionadas em regiões estratégicas, com infraestrutura completa e potencial de valorização.
+              </p>
+            </article>
+            <article class="card">
+              <h3 class="card-title">Atendimento consultivo</h3>
+              <p class="card-text">
+                Entendimento do seu momento de vida, análise de perfil e acompanhamento em cada visita e negociação.
+              </p>
+            </article>
           </div>
         </section>
-      </div>
 
-      <h2 class="section-title">Leads ativos</h2>
+        <section class="cta-final">
+          <h2 class="section-title">Vamos falar sobre o imóvel ideal para você?</h2>
+          <p class="cta-text">
+            Me chame no WhatsApp e conte em qual momento você está: comprando, investindo ou trocando de imóvel.
+          </p>
+          <a href="https://wa.me/5511999999999" class="primary-button">
+            Falar com Leonidas no WhatsApp
+          </a>
+        </section>
+      </main>
 
-      <section class="panel">
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 80px;">Data</th>
-                <th style="width: 150px;">Nome</th>
-                <th style="width: 100px;">Origem</th>
-                <th style="width: 120px;">Empreendimento</th>
-                <th style="width: 110px;">Status</th>
-                <th style="width: 110px; text-align: right;">Valor previsto</th>
-              </tr>
-            </thead>
-            <tbody id="tbody-leads">
-            </tbody>
-          </table>
-        </div>
+      <footer class="footer">
+        <p class="footer-text">
+          © 2026 Leonidas corretor · Consultor imobiliário em São Paulo
+        </p>
+      </footer>
 
-        <div class="footer-info">
-          <div>Total exibido: <span id="info-total-linhas">– leads</span></div>
-          <div>Filtro: <span>status diferentes de "Perdido" / "Descartado"</span></div>
-        </div>
-      </section>
-    </div>
-  </div>
-
-  <script>
-    const csvUrl =
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vTyYxWwXeRZyTue9GuIZaAAEFxWC-1gKPnNev-P5odNDn7QPCWahW-l0JFWGmt8j64qdb2RrHNDQPoM/pub?gid=0&single=true&output=csv';
-
-    function parseCSV(text) {
-      const lines = text.split('\n').map((l) => l.trim()).filter((l) => l);
-      return lines.map((line) => {
-        const parts = [];
-        let current = '';
-        let insideQuotes = false;
-
-        for (let i = 0; i < line.length; i++) {
-          const c = line[i];
-          if (c === '"') {
-            insideQuotes = !insideQuotes;
-          } else if (c === ',' && !insideQuotes) {
-            parts.push(current);
-            current = '';
-          } else {
-            current += c;
-          }
-        }
-        parts.push(current);
-        return parts;
-      });
-    }
-
-    function parseValorBR(valorStr) {
-      if (!valorStr) return 0;
-      const cleaned = valorStr.replace(/[^0-9,]/g, '').replace('.', '').replace(',', '.');
-      const num = parseFloat(cleaned);
-      return isNaN(num) ? 0 : num;
-    }
-
-    function formatValorBR(num) {
-      return 'R$ ' + num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    function parseDataBR(dataStr) {
-      if (!dataStr) return null;
-      const partes = dataStr.split('/');
-      if (partes.length !== 3) return null;
-      const d = new Date(parseInt(partes[2], 10), parseInt(partes[1], 10) - 1, parseInt(partes[0], 10));
-      return isNaN(d.getTime()) ? null : d;
-    }
-
-    function formatDataBR(date) {
-      return date.toLocaleDateString('pt-BR');
-    }
-
-    fetch(csvUrl)
-      .then((resp) => resp.text())
-      .then((text) => {
-        const rows = parseCSV(text);
-        if (!rows || rows.length <= 1) {
-          return;
-        }
-
-        const header = rows[0];
-        const dataRows = rows.slice(1).filter((r) => r.some((c) => c && c.trim() !== ''));
-
-        const idxData = 1;
-        const idxNome = 2;
-        const idxOrigem = 4;
-        const idxEmp = 5;
-        const idxStatus = 7;
-        const idxValor = 8;
-
-        const hoje = new Date();
-        const trintaDiasAtras = new Date(hoje);
-        trintaDiasAtras.setDate(hoje.getDate() - 30);
-
-        let totalLeads = 0;
-        let leadsNovos = 0;
-        let vgvPotencial = 0;
-        let vendasGanhas = 0;
-        let ativos = 0;
-        let ticketAlto = 0;
-        let ultimoLeadData = null;
-
-        const porStatus = {};
-        const linhasTabela = [];
-
-        dataRows.forEach((cols) => {
-          totalLeads++;
-
-          const dataStr = cols[idxData] ? cols[idxData].trim() : '';
-          const dt = parseDataBR(dataStr);
-          if (dt) {
-            if (!ultimoLeadData || dt > ultimoLeadData) {
-              ultimoLeadData = dt;
-            }
-            if (dt >= trintaDiasAtras && dt <= hoje) {
-              leadsNovos++;
-            }
-          }
-
-          const valor = parseValorBR(cols[idxValor] || '');
-          vgvPotencial += valor;
-
-          const statusRaw = cols[idxStatus] ? cols[idxStatus].trim() : '';
-          const statusLower = statusRaw.toLowerCase();
-
-          if (statusLower.includes('venda ganha') || statusLower.includes('assinado') || statusLower.includes('aprovado')) {
-            vendasGanhas++;
-          }
-
-          const statusKey = statusRaw || 'Sem status';
-          porStatus[statusKey] = (porStatus[statusKey] || 0) + 1;
-
-          if (!statusLower.includes('perdido') && !statusLower.includes('descartado')) {
-            ativos++;
-            if (valor >= 800000) {
-              ticketAlto++;
-            }
-            linhasTabela.push({
-              data: dt ? formatDataBR(dt) : dataStr || '-',
-              nome: cols[idxNome] || '-',
-              origem: cols[idxOrigem] || '-',
-              emp: cols[idxEmp] || '-',
-              status: statusRaw || '-',
-              valor,
-            });
-          }
-        });
-
-        document.getElementById('card-total-leads').textContent = totalLeads;
-        document.getElementById('card-leads-novos').textContent = leadsNovos;
-        document.getElementById('card-vgv').textContent = formatValorBR(vgvPotencial);
-
-        const taxaConversao = totalLeads > 0 ? ((vendasGanhas / totalLeads) * 100).toFixed(1) : 0;
-        document.getElementById('card-conversao').textContent = taxaConversao + '%';
-        document.getElementById('card-vendas-ganhas').textContent =
-          vendasGanhas + (vendasGanhas === 1 ? ' venda ganha' : ' vendas ganhas');
-
-        document.getElementById('info-ativos').textContent = ativos;
-        document.getElementById('info-ticket-alto').textContent = ticketAlto;
-        document.getElementById('info-total-linhas').textContent = ativos + ' leads';
-
-        const infoData = document.getElementById('info-data');
-        if (infoData) {
-          infoData.textContent = formatDataBR(new Date());
-        }
-        const infoUltimoLead = document.getElementById('info-ultimo-lead');
-        if (infoUltimoLead) {
-          infoUltimoLead.textContent = ultimoLeadData ? formatDataBR(ultimoLeadData) : '-';
-        }
-
-        const funnelContainer = document.getElementById('funnel-container');
-        funnelContainer.innerHTML = '';
-
-        const totalPorStatus = Object.values(porStatus).reduce((acc, v) => acc + v, 0) || 1;
-        const statusOrdenados = Object.entries(porStatus).sort((a, b) => b[1] - a[1]);
-
-        statusOrdenados.forEach(([statusLabel, qtd]) => {
-          const row = document.createElement('div');
-          row.className = 'funnel-row';
-
-          const label = document.createElement('div');
-          label.className = 'funnel-label';
-          label.textContent = statusLabel;
-
-          const barOuter = document.createElement('div');
-          barOuter.className = 'funnel-bar-outer';
-
-          const barInner = document.createElement('div');
-          barInner.className = 'funnel-bar-inner';
-
-          const perc = (qtd / totalPorStatus) || 0;
-          requestAnimationFrame(() => {
-            barInner.style.transform = 'scaleX(' + perc.toFixed(3) + ')';
-          });
-
-          barOuter.appendChild(barInner);
-
-          const value = document.createElement('div');
-          value.className = 'funnel-value';
-          value.textContent = qtd + ' · ' + Math.round(perc * 100) + '%';
-
-          row.appendChild(label);
-          row.appendChild(barOuter);
-          row.appendChild(value);
-
-          funnelContainer.appendChild(row);
-        });
-
-        const tbody = document.getElementById('tbody-leads');
-        tbody.innerHTML = '';
-      })
-      .catch((err) => {
-        console.error('Erro ao carregar CSV', err);
-      });
-  </script>
+    </div> <!-- wrapper-inner -->
+  </div>   <!-- wrapper -->
 </body>
 </html>
+  
