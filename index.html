@@ -287,7 +287,7 @@
         margin: 0;
         border-radius: 0;
         max-width: 100%;
-        height: 100vh;
+      height: 100vh;
         padding: 8px 8px 12px;
       }
       header {
@@ -433,6 +433,24 @@
           <div>Filtro: <span>status diferentes de "Perdido" / "Descartado"</span></div>
         </div>
       </section>
+
+      <!-- NOVO GRÁFICO: LEADS POR EMPREENDIMENTO -->
+      <h2 class="section-title">Leads por empreendimento</h2>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Distribuição por empreendimento</div>
+            <div class="panel-subtitle">Contagem de leads por empreendimento (todos os status)</div>
+          </div>
+        </div>
+
+        <div id="emp-pizza" style="display:flex;align-items:center;gap:12px;">
+          <svg id="emp-pizza-svg" viewBox="0 0 200 200" style="width:150px;height:150px;"></svg>
+          <div id="emp-legenda" style="font-size:10px;color:#9ca3af;display:flex;flex-direction:column;gap:3px;"></div>
+        </div>
+      </section>
+      <!-- FIM NOVO GRÁFICO -->
     </div>
   </div>
 
@@ -557,10 +575,18 @@
           }
         });
 
+        // Funil por status (somente ativos)
         const porStatusLimpo = {};
         linhasAtivos.forEach((linha) => {
           const s = linha.status || 'Sem status';
           porStatusLimpo[s] = (porStatusLimpo[s] || 0) + 1;
+        });
+
+        // Leads por empreendimento (TODOS os leads da base)
+        const porEmpreendimento = {};
+        dataRows.forEach((cols) => {
+          const emp = (cols[idxEmp] || 'Sem empreendimento').trim();
+          porEmpreendimento[emp] = (porEmpreendimento[emp] || 0) + 1;
         });
 
         document.getElementById('card-total-leads').textContent = totalLeads;
@@ -585,6 +611,7 @@
           infoUltimoLead.textContent = ultimoLeadData ? formatDataBR(ultimoLeadData) : '-';
         }
 
+        // FUNIL EM %
         const funnelContainer = document.getElementById('funnel-container');
         funnelContainer.innerHTML = '';
 
@@ -623,6 +650,7 @@
           funnelContainer.appendChild(row);
         });
 
+        // PIZZA LEADS ATIVOS POR STATUS
         const svg = document.getElementById('ativos-pizza-svg');
         const legenda = document.getElementById('ativos-legenda');
         if (svg && legenda) {
@@ -686,6 +714,68 @@
             legenda.appendChild(item);
 
             anguloAcumulado = anguloFinal;
+          });
+        }
+
+        // PIZZA LEADS POR EMPREENDIMENTO (TODOS OS LEADS)
+        const svgEmp = document.getElementById('emp-pizza-svg');
+        const legendaEmp = document.getElementById('emp-legenda');
+
+        if (svgEmp && legendaEmp) {
+          const totalEmp = Object.values(porEmpreendimento).reduce((acc, v) => acc + v, 0) || 1;
+          const entriesEmp = Object.entries(porEmpreendimento).sort((a, b) => b[1] - a[1]);
+
+          while (svgEmp.firstChild) svgEmp.removeChild(svgEmp.firstChild);
+          legendaEmp.innerHTML = '';
+
+          const cx = 100;
+          const cy = 100;
+          const r = 80;
+          let anguloAcumuladoEmp = -Math.PI / 2;
+
+          const coresEmp = [
+            '#8a6a24',
+            '#9b7a2c',
+            '#b08d33',
+            '#c19a3a',
+            '#d1ad4a',
+            '#e0c060',
+            '#f0d47a'
+          ];
+
+          entriesEmp.forEach(([empLabel, qtd], idx) => {
+            const frac = qtd / totalEmp;
+            const angulo = frac * 2 * Math.PI;
+            const anguloFinal = anguloAcumuladoEmp + angulo;
+
+            const x1 = cx + r * Math.cos(anguloAcumuladoEmp);
+            const y1 = cy + r * Math.sin(anguloAcumuladoEmp);
+            const x2 = cx + r * Math.cos(anguloFinal);
+            const y2 = cy + r * Math.sin(anguloFinal);
+
+            const grandeArco = angulo > Math.PI ? 1 : 0;
+
+            const pathData = [
+              `M ${cx} ${cy}`,
+              `L ${x1} ${y1}`,
+              `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
+              'Z',
+            ].join(' ');
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', pathData);
+            path.setAttribute('fill', coresEmp[idx % coresEmp.length]);
+            svgEmp.appendChild(path);
+
+            const item = document.createElement('div');
+            const cor = coresEmp[idx % coresEmp.length];
+            const perc = Math.round(frac * 100);
+            item.innerHTML =
+              `<span style="display:inline-block;width:10px;height:10px;border-radius:999px;background:${cor};margin-right:6px;"></span>` +
+              `${empLabel} — ${qtd} (${perc}%)`;
+            legendaEmp.appendChild(item);
+
+            anguloAcumuladoEmp = anguloFinal;
           });
         }
       })
