@@ -298,22 +298,24 @@
 
             totalClientes++;
 
-            const origem = c[COL_ORIGEM] && c[COL_ORIGEM].v ? String(c[COL_ORIGEM].v).trim() : "";
-            const status = c[COL_STATUS] && c[COL_STATUS].v ? String(c[COL_STATUS].v).trim() : "";
-            const vgvPrevCell = c[COL_VGV_PREV] && c[COL_VGV_PREV].v ? c[COL_VGV_PREV].v : 0;
+                      // aqui Origem deve ser o campo tipo "App Cury", não telefone
+          const origem = c[COL_ORIGEM] && c[COL_ORIGEM].v ? String(c[COL_ORIGEM].v).trim() : "";
+          const status = c[COL_STATUS] && c[COL_STATUS].v ? String(c[COL_STATUS].v).trim() : "";
+          const vgvPrevCell = c[COL_VGV_PREV] && c[COL_VGV_PREV].v ? c[COL_VGV_PREV].v : 0;
 
-            if (origem) {
-              origemCount[origem] = (origemCount[origem] || 0) + 1;
-            }
-            if (status) {
-              statusCount[status] = (statusCount[status] || 0) + 1;
-            }
+          if (origem) {
+            origemCount[origem] = (origemCount[origem] || 0) + 1;
+          }
 
-            vgvPrevisto += parseNumberBR(vgvPrevCell);
+          // só conta Status relevantes para o card (Lead Novo / Em atendimento)
+          if (status === "Lead Novo" || status === "Em atendimento") {
+            statusCount[status] = (statusCount[status] || 0) + 1;
+          }
 
-            if (status.toLowerCase() === "venda ganha") {
-              vgvRealizado += parseNumberBR(vgvPrevCell);
-            }
+          vgvPrevisto += parseNumberBR(vgvPrevCell);
+
+          if (status.toLowerCase() === "venda ganha") {
+            vgvRealizado += parseNumberBR(vgvPrevCell);
           }
 
           // origem mais frequente
