@@ -452,7 +452,7 @@
         </section>
       </div>
 
-                  <h2 class="section-title">Leads ativos</h2>
+      <h2 class="section-title">Leads ativos</h2>
 
       <section class="panel">
         <div class="table-wrapper">
@@ -477,6 +477,8 @@
           <div>Filtro: <span>status diferentes de "Perdido" / "Descartado"</span></div>
         </div>
       </section>
+    </div>
+  </div>
 
   <script>
     const csvUrl =
@@ -586,7 +588,7 @@
           }
 
           const statusKey = statusRaw || 'Sem status';
-          porStatus[statusKey] = (porStatus[statusKey] || 0) + 1;
+          porStatus[statusKey] = (porStatusKey => (porStatus[statusKey] || 0) + 1)(statusKey);
 
           if (!statusLower.includes('perdido') && !statusLower.includes('descartado')) {
             ativos++;
@@ -602,6 +604,14 @@
               valor,
             });
           }
+        });
+
+        // corrigir incremento porStatus sem arrow confuso
+        // reprocessar porStatus a partir de linhasTabela:
+        const porStatusLimpo = {};
+        linhasTabela.forEach((linha) => {
+          const s = linha.status || 'Sem status';
+          porStatusLimpo[s] = (porStatusLimpo[s] || 0) + 1;
         });
 
         document.getElementById('card-total-leads').textContent = totalLeads;
@@ -629,8 +639,8 @@
         const funnelContainer = document.getElementById('funnel-container');
         funnelContainer.innerHTML = '';
 
-        const totalPorStatus = Object.values(porStatus).reduce((acc, v) => acc + v, 0) || 1;
-        const statusOrdenados = Object.entries(porStatus).sort((a, b) => b[1] - a[1]);
+        const totalPorStatus = Object.values(porStatusLimpo).reduce((acc, v) => acc + v, 0) || 1;
+        const statusOrdenados = Object.entries(porStatusLimpo).sort((a, b) => b[1] - a[1]);
 
         statusOrdenados.forEach(([statusLabel, qtd]) => {
           const row = document.createElement('div');
@@ -663,13 +673,40 @@
 
           funnelContainer.appendChild(row);
         });
-                       const tbody = document.getElementById('tbody-leads');
-        tbody.innerHTML = '';
+
         const tbody = document.getElementById('tbody-leads');
         tbody.innerHTML = '';
-      })
-        const tbody = document.getElementById('tbody-leads');
-        tbody.innerHTML = '';
+        linhasTabela.forEach((linha) => {
+          const tr = document.createElement('tr');
+
+          const tdData = document.createElement('td');
+          tdData.textContent = linha.data;
+
+          const tdNome = document.createElement('td');
+          tdNome.textContent = linha.nome;
+
+          const tdOrigem = document.createElement('td');
+          tdOrigem.textContent = linha.origem;
+
+          const tdEmp = document.createElement('td');
+          tdEmp.textContent = linha.emp;
+
+          const tdStatus = document.createElement('td');
+          tdStatus.textContent = linha.status;
+
+          const tdValor = document.createElement('td');
+          tdValor.style.textAlign = 'right';
+          tdValor.textContent = formatValorBR(linha.valor);
+
+          tr.appendChild(tdData);
+          tr.appendChild(tdNome);
+          tr.appendChild(tdOrigem);
+          tr.appendChild(tdEmp);
+          tr.appendChild(tdStatus);
+          tr.appendChild(tdValor);
+
+          tbody.appendChild(tr);
+        });
       })
       .catch((err) => {
         console.error('Erro ao carregar CSV', err);
