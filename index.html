@@ -476,7 +476,7 @@
     </div>
   </div>
 
-  <script>
+    <script>
     const csvUrl =
       'https://docs.google.com/spreadsheets/d/e/2PACX-1vTyYxWwXeRZyTue9GuIZaAAEFxWC-1gKPnNev-P5odNDn7QPCWahW-l0JFWGmt8j64qdb2RrHNDQPoM/pub?gid=0&single=true&output=csv';
 
@@ -503,6 +503,232 @@
       });
     }
 
+    function parseValorBR(valorStr) {
+      if (!valorStr) return 0;
+      const cleaned = valorStr.replace(/[^0-9,]/g, '').replace('.', '').replace(',', '.');
+      const num = parseFloat(cleaned);
+      return isNaN(num) ? 0 : num;
+    }
+
+    function formatValorBR(num) {
+      return 'R$ ' + num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function parseDataBR(dataStr) {
+      if (!dataStr) return null;
+      const partes = dataStr.split('/');
+      if (partes.length !== 3) return null;
+      const d = new Date(parseInt(partes[2], 10), parseInt(partes[1], 10) - 1, parseInt(partes[0], 10));
+      return isNaN(d.getTime()) ? null : d;
+    }
+
+    function formatDataBR(date) {
+      return date.toLocaleDateString('pt-BR');
+    }
+
+    fetch(csvUrl)
+      .then((resp) => resp.text())
+      .then((text) => {
+        const rows = parseCSV(text);
+        if (!rows || rows.length <= 1) {
+          return;
+        }
+
+        const header = rows[0];
+        const dataRows = rows.slice(1).filter((r) => r.some((c) => c && c.trim() !== ''));
+
+        const idxData = 1;
+        const idxNome = 2;
+        const idxOrigem = 4;
+        const idxEmp = 5;
+        const idxStatus = 7;
+        const idxValor = 8;
+
+        const hoje = new Date();
+        const trintaDiasAtras = new Date(hoje);
+        trintaDiasAtras.setDate(hoje.getDate() - 30);
+
+        let totalLeads = 0;
+        let leadsNovos = 0;
+        let vgvPotencial = 0;
+        let vendasGanhas = 0;
+        let ativos = 0;
+        let ticketAlto = 0;
+        let ultimoLeadData = null;
+
+        const linhasTabela = [];
+
+        dataRows.forEach((cols) => {
+          totalLeads++;
+
+          const dataStr = cols[idxData] ? cols[idxData].trim() : '';
+          const dt = parseDataBR(dataStr);
+          if (dt) {
+            if (!ultimoLeadData || dt > ultimoLeadData) {
+              ultimoLeadData = dt;
+            }
+            if (dt >= trintaDiasAtras && dt <= hoje) {
+              leadsNovos++;
+            }
+          }
+
+          const valor = parseValorBR(cols[idxValor] || '');
+          vgvPotencial += valor;
+
+          const statusRaw = cols[idxStatus] ? cols[idxStatus].trim() : '';
+          const statusLower = statusRaw.toLowerCase();
+
+          if (statusLower.includes('venda ganha') || statusLower.includes('assinado') || statusLower.includes('aprovado')) {
+            vendasGanhas++;
+          }
+
+          if (!statusLower.includes('perdido') && !statusLower.includes('descartado')) {
+            ativos++;
+            if (valor >= 800000) {
+              ticketAlto++;
+            }
+            linhasTabela.push({
+              data: dt ? formatDataBR(dt) : dataStr || '-',
+              nome: cols[idxNome] || '-',
+              origem: cols[idxOrigem] || '-',
+              emp: cols[idxEmp] || '-',
+              status: statusRaw || '-',
+              valor,
+            });
+          }
+        });
+
+        // Funil por status baseado apenas em leads ativos
+        const porStatusLimpo = {};
+        linhasTabela.forEach((linha) => {
+          const s = linha.status || 'Sem status';
+          porStatusLimpo[s] = (porStatusLimpo[s] || 0) + 1;
+        });
+
+        document.getElementById('card-total-leads').textContent = totalLeads;
+        document.getElementById('card-leads-novos').textContent = leadsNovos;
+        document.getElementById('card-vgv').textContent = formatValorBR(vgvPotencial);
+
+        const taxaConversao = totalLeads > 0 ? ((vendasGanhas / totalLeads) * 100).toFixed(1) : 0;
+        document.getElementById('card-conversao').textContent = taxaConversao + '%';
+        document.getElementById('card-vendas-ganhas').textContent =
+          vendasGanhas + (vendasGanhas === 1 ? ' venda ganha' : ' vendas ganhas');
+
+        document.getElementById('info-ativos').textContent = ativos;
+        document.getElementById('info-ticket-alto').textContent = ticketAlto;
+        document.getElementById('info-total-linhas').textContent = ativos + ' leads';
+
+        const infoData = document.getElementById('info-data');
+        if (infoData) {
+          infoData.textContent = formatDataBR(new Date());
+        }
+        const infoUltimoLead = document.getElementById('info-ultimo-lead');
+        if (infoUltimoLead) {
+          infoUltimoLead.textContent = ultimoLeadData ? formatDataBR(ultimoLeadData) : '-';
+        }
+
+        // monta funil em %
+        const funnelContainer = document.getElementById('funnel-container');
+        funnelContainer.innerHTML = '';
+
+        const totalPorStatus = Object.values(porStatusLimpo).reduce((acc, v) => acc + v, 0) || 1;
+        const statusOrdenados = Object.entries(porStatusLimpo).sort((a, b) => b[1] - a[1]);
+
+        statusOrdenados.forEach(([statusLabel, qtd]) => {
+          const row = document.createElement('div');
+          row.className = 'funnel-row';
+
+          const label = document.createElement('div');
+          label.className = 'funnel-label';
+          label.textContent = statusLabel;
+
+          const barOuter = document.createElement('div');
+          barOuter.className = 'funnel-bar-outer';
+
+          const barInner = document.createElement('div');
+          barInner.className = 'funnel-bar-inner';
+
+          const perc = (qtd / totalPorStatus) || 0;
+          requestAnimationFrame(() => {
+            barInner.style.transform = 'scaleX(' + perc.toFixed(3) + ')';
+          });
+
+          barOuter.appendChild(barInner);
+
+          const value = document.createElement('div');
+          value.className = 'funnel-value';
+          value.textContent = Math.round(perc * 100) + '%';
+
+          row.appendChild(label);
+          row.appendChild(barOuter);
+          row.appendChild(value);
+
+          funnelContainer.appendChild(row);
+        });
+
+        // Gráfico de pizza para leads ativos por status
+        const svg = document.getElementById('ativos-pizza-svg');
+        const legenda = document.getElementById('ativos-legenda');
+        if (svg && legenda) {
+          const ativosPorStatus = {};
+          linhasTabela.forEach((linha) => {
+            const s = linha.status || 'Sem status';
+            ativosPorStatus[s] = (ativosPorStatus[s] || 0) + 1;
+          });
+
+          const totalAtivos = Object.values(ativosPorStatus).reduce((acc, v) => acc + v, 0) || 1;
+          const entries = Object.entries(ativosPorStatus).sort((a, b) => b[1] - a[1]);
+
+          while (svg.firstChild) svg.removeChild(svg.firstChild);
+          legenda.innerHTML = '';
+
+          const cx = 100;
+          const cy = 100;
+          const r = 80;
+          let anguloAcumulado = -Math.PI / 2;
+
+          const cores = ['#fbbf24', '#22c55e', '#3b82f6', '#ec4899', '#f97316', '#a855f7', '#e5e7eb'];
+
+          entries.forEach(([statusLabel, qtd], idx) => {
+            const frac = qtd / totalAtivos;
+            const angulo = frac * 2 * Math.PI;
+            const anguloFinal = anguloAcumulado + angulo;
+
+            const x1 = cx + r * Math.cos(anguloAcumulado);
+            const y1 = cy + r * Math.sin(anguloAcumulado);
+            const x2 = cx + r * Math.cos(anguloFinal);
+            const y2 = cy + r * Math.sin(anguloFinal);
+
+            const grandeArco = angulo > Math.PI ? 1 : 0;
+
+            const pathData = [
+              `M ${cx} ${cy}`,
+              `L ${x1} ${y1}`,
+              `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
+              'Z',
+            ].join(' ');
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', pathData);
+            path.setAttribute('fill', cores[idx % cores.length]);
+            svg.appendChild(path);
+
+            const item = document.createElement('div');
+            const cor = cores[idx % cores.length];
+            const perc = Math.round(frac * 100);
+            item.innerHTML =
+              `<span style="display:inline-block;width:10px;height:10px;border-radius:999px;background:${cor};margin-right:6px;"></span>` +
+              `${statusLabel} — ${qtd} (${perc}%)`;
+            legenda.appendChild(item);
+
+            anguloAcumulado = anguloFinal;
+          });
+        }
+      })
+      .catch((err) => {
+        console.error('Erro ao carregar CSV', err);
+      });
+  </script>
     function parseValorBR(valorStr) {
       if (!valorStr) return 0;
       const cleaned = valorStr.replace(/[^0-9,]/g, '').replace('.', '').replace(',', '.');
