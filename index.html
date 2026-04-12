@@ -402,17 +402,25 @@
       </section>
 
       <div class="layout-grid">
-        <section class="panel">
+                <section class="panel">
           <div class="panel-header">
             <div>
-              <div class="panel-title">Funil por status</div>
-              <div class="panel-subtitle">Distribuição dos leads por etapa</div>
+              <div class="panel-title">Resumo rápido</div>
+              <div class="panel-subtitle">Temperatura da base</div>
             </div>
           </div>
-          <div id="funnel-container">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <p style="font-size:11px;color:var(--text-muted);margin:0;">
+              Leads ativos: <span id="info-ativos">–</span>
+            </p>
+            <p style="font-size:11px;color:var(--text-muted);margin:0;">
+              Tickets altos (&gt; R$ 800.000): <span id="info-ticket-alto">–</span>
+            </p>
+            <p style="font-size:11px;color:var(--text-muted);margin:0;">
+              Último lead em: <span id="info-ultimo-lead">–</span>
+            </p>
           </div>
         </section>
-
         <section class="panel">
           <div class="panel-header">
             <div>
