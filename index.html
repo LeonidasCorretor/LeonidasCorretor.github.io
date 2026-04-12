@@ -281,6 +281,12 @@
     .footer-info span {
       color: var(--gold-soft);
     }
+    /* Em telas entre 900px e 1280px (notebook 13"), usar 3 cards por linha */
+@media (max-width: 1280px) and (min-width: 900px) {
+  .cards-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
 
     @media (max-width: 1024px) {
       .wrapper {
