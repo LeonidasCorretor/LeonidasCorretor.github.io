@@ -203,50 +203,48 @@
           </div>
         </div>
         <div class="header-right">
-          Atualização manual<br />Use como painel rápido
+          Dados carregados da planilha Google Sheets
         </div>
       </header>
 
-                  <section class="dashboard-grid" style="grid-template-columns: 1fr;">
-        <div class="card" style="padding: 0; overflow: hidden;">
-          <iframe
-            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTyYxWwXeRZyTue9GuIZaAAEFxWC-1gKPnNev-P5odNDn7QPCWahW-l0JFWGmt8j64qdb2RrHNDQPoM/pubchart?oid=822740753&format=interactive"
-            width="100%"
-            height="600"
-            frameborder="0">
-          </iframe>
+      <section class="dashboard-grid">
+        <div class="card">
+          <div class="card-label">Total de clientes atendidos</div>
+          <div class="card-value" id="total-clientes">0</div>
+          <div class="card-note">Quantidade total de clientes em atendimento</div>
         </div>
-      </section>
+
         <div class="card">
           <div class="card-label">Origem</div>
-          <div class="card-value">—</div>
-          <div class="card-note">Principais canais: WhatsApp, portais, indicações</div>
+          <div class="card-value" id="origem-destaque">—</div>
+          <div class="card-note">Origem mais frequente entre os clientes</div>
         </div>
 
         <div class="card">
           <div class="card-label">Status</div>
-          <div class="card-value">—</div>
-          <div class="card-note">Ex.: Em prospecção, visitas, propostas, fechados</div>
+          <div class="card-value" id="status-destaque">—</div>
+          <div class="card-note">Status mais frequente no funil</div>
         </div>
 
         <div class="card">
           <div class="card-label">VGV previsto</div>
-          <div class="card-value">R$ 0</div>
+          <div class="card-value" id="vgv-previsto">R$ 0</div>
           <div class="card-note">Somatório estimado das vendas em negociação</div>
         </div>
 
         <div class="card">
           <div class="card-label">VGV realizado</div>
-          <div class="card-value">R$ 0</div>
-          <div class="card-note">Total efetivamente fechado no período</div>
+          <div class="card-value" id="vgv-realizado">R$ 0</div>
+          <div class="card-note">Total de VGV com status “venda ganha”</div>
         </div>
 
         <div class="card">
           <div class="card-label">Período</div>
-          <div class="card-value">—</div>
-          <div class="card-note">Ex.: Semana atual, mês atual, trimestre</div>
+          <div class="card-value" id="periodo">—</div>
+          <div class="card-note">Intervalo de datas definido na planilha</div>
         </div>
       </section>
+
       <footer class="footer">
         <p class="footer-text">
           © 2026 Leonidas corretor
@@ -255,5 +253,111 @@
 
     </div>
   </div>
+
+  <script>
+    const SHEET_ID = "1UCZa5G_cHZSubeRZyuZinGCxC1HvF3VN8KSQrHVlOpw";
+    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+    function parseNumberBR(value) {
+      if (typeof value !== "string") return Number(value) || 0;
+      const v = value.replace(/[R$\s.]/g, "").replace(",", ".");
+      const n = Number(v);
+      return isNaN(n) ? 0 : n;
+    }
+
+    function formatCurrencyBR(n) {
+      return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+
+    function fetchSheetData() {
+      fetch(SHEET_URL)
+        .then(r => r.text())
+        .then(txt => {
+          const json = JSON.parse(txt.substring(txt.indexOf("{"), txt.lastIndexOf("}") + 1));
+          const rows = json.table.rows;
+
+          let totalClientes = 0;
+          let vgvPrevisto = 0;
+          let vgvRealizado = 0;
+          const origemCount = {};
+          const statusCount = {};
+
+          // Ajuste de índices:
+          // A=0, B=1, C=2, D=3, ..., I=8, J=9, K=10
+          const COL_NOME = 1;    // B
+          const COL_ORIGEM = 2;  // C (ajuste se necessário)
+          const COL_STATUS = 3;  // D (ajuste se necessário)
+          const COL_VGV_PREV = 8; // I
+
+          // linha 0 = cabeçalho
+          for (let i = 1; i < rows.length; i++) {
+            const c = rows[i].c;
+            if (!c) continue;
+
+            const nome = c[COL_NOME] && c[COL_NOME].v ? String(c[COL_NOME].v).trim() : "";
+            if (!nome) continue; // só conta linhas com nome
+
+            totalClientes++;
+
+            const origem = c[COL_ORIGEM] && c[COL_ORIGEM].v ? String(c[COL_ORIGEM].v).trim() : "";
+            const status = c[COL_STATUS] && c[COL_STATUS].v ? String(c[COL_STATUS].v).trim() : "";
+            const vgvPrevCell = c[COL_VGV_PREV] && c[COL_VGV_PREV].v ? c[COL_VGV_PREV].v : 0;
+
+            if (origem) {
+              origemCount[origem] = (origemCount[origem] || 0) + 1;
+            }
+            if (status) {
+              statusCount[status] = (statusCount[status] || 0) + 1;
+            }
+
+            vgvPrevisto += parseNumberBR(vgvPrevCell);
+
+            if (status.toLowerCase() === "venda ganha") {
+              vgvRealizado += parseNumberBR(vgvPrevCell);
+            }
+          }
+
+          // origem mais frequente
+          let origemTop = "—";
+          let origemTopCount = 0;
+          Object.keys(origemCount).forEach(o => {
+            if (origemCount[o] > origemTopCount) {
+              origemTopCount = origemCount[o];
+              origemTop = o;
+            }
+          });
+
+          // status mais frequente
+          let statusTop = "—";
+          let statusTopCount = 0;
+          Object.keys(statusCount).forEach(s => {
+            if (statusCount[s] > statusTopCount) {
+              statusTopCount = statusCount[s];
+              statusTop = s;
+            }
+          });
+
+          // período J1 e K1 (linha 0, colunas 9 e 10)
+          const headerRow = rows[0].c;
+          const periodoInicial = headerRow[9] && headerRow[9].v ? headerRow[9].v : "";
+          const periodoFinal = headerRow[10] && headerRow[10].v ? headerRow[10].v : "";
+          const periodoTexto = periodoInicial && periodoFinal
+            ? `${periodoInicial} a ${periodoFinal}`
+            : (periodoInicial || periodoFinal || "—");
+
+          document.getElementById("total-clientes").textContent = totalClientes;
+          document.getElementById("origem-destaque").textContent = origemTop;
+          document.getElementById("status-destaque").textContent = statusTop;
+          document.getElementById("vgv-previsto").textContent = formatCurrencyBR(vgvPrevisto);
+          document.getElementById("vgv-realizado").textContent = formatCurrencyBR(vgvRealizado);
+          document.getElementById("periodo").textContent = periodoTexto;
+        })
+        .catch(err => {
+          console.error("Erro ao carregar planilha:", err);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchSheetData);
+  </script>
 </body>
 </html>
