@@ -298,7 +298,7 @@
             totalClientes++;
 
                       // aqui Origem deve ser o campo tipo "App Cury", não telefone
-          const origem = c[COL_ORIGEM] && c[COL_ORIGEM].v ? String(c[COL_ORIGEM].v).trim() : "";
+                    const origem = c[COL_ORIGEM] && c[COL_ORIGEM].v ? String(c[COL_ORIGEM].v).trim() : "";
           const status = c[COL_STATUS] && c[COL_STATUS].v ? String(c[COL_STATUS].v).trim() : "";
           const vgvPrevCell = c[COL_VGV_PREV] && c[COL_VGV_PREV].v ? c[COL_VGV_PREV].v : 0;
 
@@ -306,13 +306,17 @@
             origemCount[origem] = (origemCount[origem] || 0) + 1;
           }
 
-          // só conta Status relevantes para o card (Lead Novo / Em atendimento)
+          // só conta Lead Novo ou Em atendimento para o card de Status
           if (status === "Lead Novo" || status === "Em atendimento") {
             statusCount[status] = (statusCount[status] || 0) + 1;
           }
 
           vgvPrevisto += parseNumberBR(vgvPrevCell);
 
+          // VGV realizado = soma VGV Previsto onde status é "Venda ganha"
+          if (status === "Venda ganha") {
+            vgvRealizado += parseNumberBR(vgvPrevCell);
+          }
           if (status.toLowerCase() === "venda ganha") {
             vgvRealizado += parseNumberBR(vgvPrevCell);
           }
