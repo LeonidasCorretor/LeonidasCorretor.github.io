@@ -71,13 +71,17 @@
       overflow: hidden;
       border: 1px solid rgba(207, 181, 59, 0.5);
       box-shadow: 0 0 0 1px rgba(0,0,0,0.9), 0 8px 18px rgba(0,0,0,0.9);
-      background: radial-gradient(circle at top, #fbbf24 0, #b45309 45%, #111827 100%);
+      background: #020617;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #0b1120;
-      font-weight: 800;
-      font-size: 18px;
+    }
+
+    .brand-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .brand-text-main {
@@ -104,15 +108,28 @@
     .time-info span {
       color: var(--gold-soft);
     }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="wrapper-inner">
+      <header>
+        <div class="brand">
+          <div class="brand-logo">
+            <img src="https://LeonidasCorretor.github.io/Logo (2) (1) (1).png" alt="Corretor de Leônidas" />
+          </div>
+          <div>
+            <div class="brand-text-main">Corretor de Leônidas</div>
+            <div class="brand-text-sub">Funil de vendas · Imóveis Cury</div>
+          </div>
+        </div>
+        <div class="time-info">
+          Atualizado em <span id="info-data"></span><br />
+          Origem: <span>Google Sheets · Leads Cury</span>
+        </div>
+      </header>
 
-    h2.section-title {
-      margin: 12px 0 10px;
-      font-size: 15px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--gold);
-    }
-
+      <h2 class="section-title">Visão geral</h2>
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -357,6 +374,7 @@
             CL
           </div>
           <div>
+            
             <div class="brand-text-main">Corretor de Leônidas</div>
             <div class="brand-text-sub">Funil de vendas · Imóveis Cury</div>
           </div>
