@@ -560,7 +560,6 @@
         let ticketAlto = 0;
         let ultimoLeadData = null;
 
-        const porStatus = {};
         const linhasTabela = [];
 
         dataRows.forEach((cols) => {
@@ -587,9 +586,6 @@
             vendasGanhas++;
           }
 
-          const statusKey = statusRaw || 'Sem status';
-          porStatus[statusKey] = (porStatusKey => (porStatus[statusKey] || 0) + 1)(statusKey);
-
           if (!statusLower.includes('perdido') && !statusLower.includes('descartado')) {
             ativos++;
             if (valor >= 800000) {
@@ -606,8 +602,7 @@
           }
         });
 
-        // corrigir incremento porStatus sem arrow confuso
-        // reprocessar porStatus a partir de linhasTabela:
+        // Funil por status baseado apenas em leads ativos
         const porStatusLimpo = {};
         linhasTabela.forEach((linha) => {
           const s = linha.status || 'Sem status';
@@ -636,15 +631,15 @@
           infoUltimoLead.textContent = ultimoLeadData ? formatDataBR(ultimoLeadData) : '-';
         }
 
-                  const value = document.createElement('div');
-          value.className = 'funnel-value';
-                    value.textContent = Math.round(perc * 100) + '%';
+        const funnelContainer = document.getElementById('funnel-container');
+        funnelContainer.innerHTML = '';
 
-          row.appendChild(label);
-          row.appendChild(barOuter);
-          row.appendChild(value);
+        const totalPorStatus = Object.values(porStatusLimpo).reduce((acc, v) => acc + v, 0) || 1;
+        const statusOrdenados = Object.entries(porStatusLimpo).sort((a, b) => b[1] - a[1]);
 
-          funnelContainer.appendChild(row);
+        statusOrdenados.forEach(([statusLabel, qtd]) => {
+          const row = document.createElement('div');
+          row.className = 'funnel-row';
 
           const label = document.createElement('div');
           label.className = 'funnel-label';
@@ -665,7 +660,7 @@
 
           const value = document.createElement('div');
           value.className = 'funnel-value';
-          value.textContent = qtd + ' · ' + Math.round(perc * 100) + '%';
+          value.textContent = Math.round(perc * 100) + '%';
 
           row.appendChild(label);
           row.appendChild(barOuter);
