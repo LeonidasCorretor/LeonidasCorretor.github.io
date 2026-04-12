@@ -452,20 +452,31 @@
         </section>
       </div>
 
-            <h2 class="section-title">Leads ativos</h2>
+                  <h2 class="section-title">Leads ativos</h2>
 
       <section class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Distribuição dos leads ativos</div>
-            <div class="panel-subtitle">Somente status diferentes de "Perdido" / "Descartado"</div>
-          </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 80px;">Data</th>
+                <th style="width: 150px;">Nome</th>
+                <th style="width: 100px;">Origem</th>
+                <th style="width: 120px;">Empreendimento</th>
+                <th style="width: 110px;">Status</th>
+                <th style="width: 110px; text-align: right;">Valor previsto</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-leads">
+            </tbody>
+          </table>
         </div>
 
-        <div id="ativos-chart"></div>
+        <div class="footer-info">
+          <div>Total exibido: <span id="info-total-linhas">– leads</span></div>
+          <div>Filtro: <span>status diferentes de "Perdido" / "Descartado"</span></div>
+        </div>
       </section>
-    </div>
-  </div>
 
   <script>
     const csvUrl =
