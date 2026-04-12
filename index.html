@@ -328,16 +328,8 @@
             }
           });
 
-          // status mais frequente
-          let statusTop = "—";
-          let statusTopCount = 0;
-          Object.keys(statusCount).forEach(s => {
-            if (statusCount[s] > statusTopCount) {
-              statusTopCount = statusCount[s];
-              statusTop = s;
-            }
-          });
-
+                   // status: mostrar "Lead Novo ou Em atendimento"
+          const statusTop = "Lead Novo ou Em atendimento";
           // período J1 e K1 (linha 0, colunas 9 e 10)
           const headerRow = rows[0].c;
           const periodoInicial = headerRow[9] && headerRow[9].v ? headerRow[9].v : "";
