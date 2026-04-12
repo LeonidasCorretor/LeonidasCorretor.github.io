@@ -6,14 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="debug" content="versao-1307" />
   <style>
-    :root {
-  --bg-main: #050816;
-  --bg-card: #0b1120;
-  --bg-card-alt: #020617;
-  --gold: #b08d33;      /* ouro velho mais fechado */
-  --gold-soft: #e0c57a; /* dourado mais suave */
-  --text-muted: #9ca3af;
-  --border-soft: #1f2937;
+    .card {
+  background: #020617;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9);
+  position: relative;
+  overflow: hidden;
+}
+
+.panel {
+  background: var(--bg-card-alt);
+  border-radius: 14px;
+  padding: 14px 16px 12px;
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9);
+  position: relative;
+  overflow: hidden;
+}
+
+.funnel-bar-outer {
+  flex: 1;
+  height: 16px;
+  border-radius: 999px;
+  background: #020617;
+  border: 1px solid rgba(176, 141, 51, 0.65); /* ouro velho suave */
+  overflow: hidden;
+  position: relative;
 }
     * {
       box-sizing: border-box;
