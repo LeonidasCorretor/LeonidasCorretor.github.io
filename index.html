@@ -282,12 +282,11 @@
           const origemCount = {};
           const statusCount = {};
 
-          // Ajuste de índices:
-          // A=0, B=1, C=2, D=3, ..., I=8, J=9, K=10
-          const COL_NOME = 1;    // B
-          const COL_ORIGEM = 2;  // C (ajuste se necessário)
-          const COL_STATUS = 3;  // D (ajuste se necessário)
-          const COL_VGV_PREV = 8; // I
+                   // A=0, B=1, C=2, D=3, ..., I=8, J=9, K=10
+          const COL_NOME = 2;    // C = Nome
+          const COL_ORIGEM = 3;  // D = Origem (ajuste se sua Origem estiver em outra coluna)
+          const COL_STATUS = 4;  // E = Status (ajuste se seu Status estiver em outra coluna)
+          const COL_VGV_PREV = 8; // I = VGV Previsto
 
           // linha 0 = cabeçalho
           for (let i = 1; i < rows.length; i++) {
