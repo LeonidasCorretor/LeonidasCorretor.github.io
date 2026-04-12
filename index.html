@@ -6,64 +6,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="debug" content="versao-1307" />
   <style>
-    .card {
-  background: #020617;
-  border-radius: 12px;
-  padding: 12px;
-  border: 1px solid var(--border-soft);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9);
-  position: relative;
-  overflow: hidden;
-}
+    :root {
+      --bg-main: #050816;
+      --bg-card: #0b1120;
+      --bg-card-alt: #020617;
+      --gold: #b08d33;
+      --gold-soft: #e0c57a;
+      --text-muted: #9ca3af;
+      --border-soft: #b08d33;
+    }
 
-.panel {
-  background: var(--bg-card-alt);
-  border-radius: 14px;
-  padding: 14px 16px 12px;
-  border: 1px solid var(--border-soft);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9);
-  position: relative;
-  overflow: hidden;
-}
-
-.funnel-bar-outer {
-  flex: 1;
-  height: 16px;
-  border-radius: 999px;
-  background: #020617;
-  border: 1px solid rgba(176, 141, 51, 0.65); /* ouro velho suave */
-  overflow: hidden;
-  position: relative;
-}
     * {
       box-sizing: border-box;
     }
 
     body {
-  margin: 0;
-  padding: 8px;  /* pequeno espaço nas bordas da tela */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
-  color: #e5e7eb;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-}
+      margin: 0;
+      padding: 6px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
 
     .wrapper {
-  width: 100%;
-  max-width: 880px;           /* mais estreito, cabe melhor no 13" */
-  margin: 12px auto 12px;     /* centralizado com menos margem vertical */
-  padding: 12px 14px 18px;    /* um pouco menos de padding */
-  background: #020617;
-  border-radius: 18px;
-  box-shadow:
-    0 0 0 1px rgba(176, 141, 51, 0.9),
-    0 28px 80px rgba(0, 0, 0, 0.85);
-  position: relative;
-  overflow: hidden;
-}
+      width: 100%;
+      max-width: 880px;
+      margin: 6px auto;
+      padding: 10px 12px 14px;
+      background: #020617;
+      border-radius: 16px;
+      box-shadow:
+        0 0 0 1px rgba(176, 141, 51, 0.9),
+        0 18px 50px rgba(0, 0, 0, 0.85);
+      position: relative;
+      overflow: hidden;
+    }
 
     .wrapper-inner {
       position: relative;
@@ -74,24 +55,24 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 18px;
-      gap: 16px;
+      margin-bottom: 8px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .brand-logo {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 999px;
       overflow: hidden;
       border: 1px solid rgba(207, 181, 59, 0.5);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.9), 0 8px 18px rgba(0,0,0,0.9);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.9), 0 6px 14px rgba(0,0,0,0.9);
       background: #020617;
       display: flex;
       align-items: center;
@@ -106,7 +87,7 @@
     }
 
     .brand-text-main {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -114,7 +95,7 @@
     }
 
     .brand-text-sub {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -122,7 +103,7 @@
 
     .time-info {
       text-align: right;
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
     }
 
@@ -131,8 +112,8 @@
     }
 
     h2.section-title {
-      margin: 18px 0 10px;
-      font-size: 15px;
+      margin: 6px 0 4px;
+      font-size: 13px;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--gold);
@@ -141,48 +122,48 @@
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 18px;
+      gap: 8px;
+      margin-bottom: 8px;
     }
 
     .card {
       background: #020617;
-      border-radius: 12px;
-      padding: 12px;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9);
+      border-radius: 10px;
+      padding: 8px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9);
       position: relative;
       overflow: hidden;
     }
 
     .card-label {
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.18em;
       color: var(--text-muted);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .card-main {
       display: flex;
       align-items: baseline;
       gap: 4px;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
 
     .card-main-value {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--gold-soft);
     }
 
     .card-main-suffix {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
     }
 
     .card-sub {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
     }
 
@@ -194,16 +175,16 @@
     .layout-grid {
       display: grid;
       grid-template-columns: 0.68fr 0.32fr;
-      gap: 14px;
-      margin-bottom: 12px;
+      gap: 8px;
+      margin-bottom: 6px;
     }
 
     .panel {
       background: var(--bg-card-alt);
-      border-radius: 14px;
-      padding: 14px 16px 12px;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9);
+      border-radius: 10px;
+      padding: 8px 10px 6px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9);
       position: relative;
       overflow: hidden;
     }
@@ -212,42 +193,42 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
 
     .panel-title {
-      font-size: 13px;
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.16em;
       color: var(--gold);
     }
 
     .panel-subtitle {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
     }
 
     .funnel-row {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
+      gap: 6px;
+      margin-bottom: 4px;
     }
 
     .funnel-label {
-      width: 122px;
-      font-size: 11px;
+      width: 110px;
+      font-size: 10px;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
     }
 
     .funnel-bar-outer {
       flex: 1;
-      height: 16px;
+      height: 14px;
       border-radius: 999px;
       background: #020617;
-      border: 1px solid #1f2937;
+      border: 1px solid rgba(176, 141, 51, 0.65);
       overflow: hidden;
       position: relative;
     }
@@ -257,40 +238,41 @@
       inset: 0;
       border-radius: inherit;
       background: linear-gradient(90deg, rgba(207, 181, 59, 0.2), rgba(207, 181, 59, 0.95));
-      box-shadow: 0 0 18px rgba(250, 204, 21, 0.45);
+      box-shadow: 0 0 14px rgba(250, 204, 21, 0.4);
       transform-origin: left center;
       transform: scaleX(0);
       transition: transform 0.6s ease-out;
     }
 
     .funnel-value {
-      width: 84px;
-      font-size: 11px;
+      width: 60px;
+      font-size: 10px;
       text-align: right;
       color: var(--gold-soft);
     }
 
     .footer-info {
-      margin-top: 10px;
+      margin-top: 6px;
       display: flex;
       justify-content: space-between;
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
     }
 
     .footer-info span {
       color: var(--gold-soft);
     }
-    /* Em telas entre 900px e 1280px (notebook 13"), usar 3 cards por linha */
-@media (max-width: 1280px) and (min-width: 900px) {
-  .cards-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
+
+    /* notebook 13" ~ 1280px: 3 cards por linha */
+    @media (max-width: 1280px) and (min-width: 900px) {
+      .cards-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
 
     @media (max-width: 1024px) {
       .wrapper {
-        max-width: 980px;
+        max-width: 960px;
       }
       .cards-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -306,7 +288,7 @@
         border-radius: 0;
         max-width: 100%;
         height: 100vh;
-        padding: 10px 10px 14px;
+        padding: 8px 8px 12px;
       }
       header {
         flex-direction: column;
@@ -317,7 +299,24 @@
         grid-template-columns: 1fr 1fr;
       }
       .layout-grid {
-        gap: 10px;
+        gap: 8px;
+      }
+    }
+
+    /* telas com pouca altura (tipo 1366x768) */
+    @media (max-height: 800px) {
+      body {
+        padding-top: 4px;
+        padding-bottom: 4px;
+      }
+      .wrapper {
+        margin-top: 4px;
+        margin-bottom: 4px;
+        padding-top: 8px;
+        padding-bottom: 10px;
+      }
+      .cards-grid {
+        margin-bottom: 6px;
       }
     }
   </style>
@@ -406,16 +405,10 @@
               <div class="panel-subtitle">Temperatura da base</div>
             </div>
           </div>
-          <div style="display:flex;flex-direction:column;gap:6px;">
-            <p style="font-size:11px;color:var(--text-muted);margin:0;">
-              Leads ativos: <span id="info-ativos">–</span>
-            </p>
-            <p style="font-size:11px;color:var(--text-muted);margin:0;">
-              Tickets altos (&gt; R$ 800.000): <span id="info-ticket-alto">–</span>
-            </p>
-            <p style="font-size:11px;color:var(--text-muted);margin:0;">
-              Último lead em: <span id="info-ultimo-lead">–</span>
-            </p>
+          <div style="font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:4px;">
+            <p style="margin:0;">Leads ativos: <span id="info-ativos">–</span></p>
+            <p style="margin:0;">Tickets altos (&gt; R$ 800.000): <span id="info-ticket-alto">–</span></p>
+            <p style="margin:0;">Último lead em: <span id="info-ultimo-lead">–</span></p>
           </div>
         </section>
       </div>
@@ -430,12 +423,12 @@
           </div>
         </div>
 
-        <div id="ativos-pizza" style="display:flex;align-items:center;gap:16px;">
-          <svg id="ativos-pizza-svg" viewBox="0 0 200 200" style="width:180px;height:180px;"></svg>
-          <div id="ativos-legenda" style="font-size:11px;color:#9ca3af;display:flex;flex-direction:column;gap:4px;"></div>
+        <div id="ativos-pizza" style="display:flex;align-items:center;gap:12px;">
+          <svg id="ativos-pizza-svg" viewBox="0 0 200 200" style="width:150px;height:150px;"></svg>
+          <div id="ativos-legenda" style="font-size:10px;color:#9ca3af;display:flex;flex-direction:column;gap:3px;"></div>
         </div>
 
-        <div class="footer-info" style="margin-top:14px;">
+        <div class="footer-info" style="margin-top:8px;">
           <div>Total exibido: <span id="info-total-linhas">– leads</span></div>
           <div>Filtro: <span>status diferentes de "Perdido" / "Descartado"</span></div>
         </div>
@@ -592,7 +585,6 @@
           infoUltimoLead.textContent = ultimoLeadData ? formatDataBR(ultimoLeadData) : '-';
         }
 
-        // FUNIL EM %
         const funnelContainer = document.getElementById('funnel-container');
         funnelContainer.innerHTML = '';
 
@@ -631,7 +623,6 @@
           funnelContainer.appendChild(row);
         });
 
-        // PIZZA LEADS ATIVOS
         const svg = document.getElementById('ativos-pizza-svg');
         const legenda = document.getElementById('ativos-legenda');
         if (svg && legenda) {
@@ -653,14 +644,14 @@
           let anguloAcumulado = -Math.PI / 2;
 
           const cores = [
-  '#8a6a24', // ouro velho bem escuro
-  '#9b7a2c',
-  '#b08d33',
-  '#c19a3a',
-  '#d1ad4a',
-  '#e0c060',
-  '#f0d47a'
-];
+            '#8a6a24',
+            '#9b7a2c',
+            '#b08d33',
+            '#c19a3a',
+            '#d1ad4a',
+            '#e0c060',
+            '#f0d47a'
+          ];
 
           entries.forEach(([statusLabel, qtd], idx) => {
             const frac = qtd / totalAtivos;
