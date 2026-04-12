@@ -636,15 +636,15 @@
           infoUltimoLead.textContent = ultimoLeadData ? formatDataBR(ultimoLeadData) : '-';
         }
 
-        const funnelContainer = document.getElementById('funnel-container');
-        funnelContainer.innerHTML = '';
+                  const value = document.createElement('div');
+          value.className = 'funnel-value';
+          value.textContent = qtd + ' · ' + Math.round(perc * 100) + '%';
 
-        const totalPorStatus = Object.values(porStatusLimpo).reduce((acc, v) => acc + v, 0) || 1;
-        const statusOrdenados = Object.entries(porStatusLimpo).sort((a, b) => b[1] - a[1]);
+          row.appendChild(label);
+          row.appendChild(barOuter);
+          row.appendChild(value);
 
-        statusOrdenados.forEach(([statusLabel, qtd]) => {
-          const row = document.createElement('div');
-          row.className = 'funnel-row';
+          funnelContainer.appendChild(row);
 
           const label = document.createElement('div');
           label.className = 'funnel-label';
