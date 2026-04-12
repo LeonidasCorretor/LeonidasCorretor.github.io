@@ -670,9 +670,8 @@
           ativosPorStatus[s] = (ativosPorStatus[s] || 0) + 1;
         });
 
-        const ativosChart = document.getElementById('ativos-chart');
-        ativosChart.innerHTML = '';
-
+              const tbody = document.getElementById('tbody-leads');
+        tbody.innerHTML = '';
         const totalAtivosStatus = Object.values(ativosPorStatus).reduce((acc, v) => acc + v, 0) || 1;
         const ativosOrdenados = Object.entries(ativosPorStatus).sort((a, b) => b[1] - a[1]);
 
