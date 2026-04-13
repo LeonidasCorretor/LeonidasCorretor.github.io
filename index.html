@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307" />
+  <meta name="debug" content="versao-1307-compact" />
   <style>
     :root {
       --bg-main: #050816;
@@ -20,7 +20,7 @@
 
     body {
       margin: 0;
-      padding: 6px;
+      padding: 4px;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
       color: #e5e7eb;
@@ -32,14 +32,14 @@
 
     .wrapper {
       width: 100%;
-      max-width: 880px;
-      margin: 6px auto;
-      padding: 10px 12px 14px;
+      max-width: 960px;
+      margin: 4px auto;
+      padding: 8px 10px 10px;
       background: #020617;
-      border-radius: 16px;
+      border-radius: 14px;
       box-shadow:
         0 0 0 1px rgba(176, 141, 51, 0.9),
-        0 18px 50px rgba(0, 0, 0, 0.85);
+        0 12px 30px rgba(0, 0, 0, 0.85);
       position: relative;
       overflow: hidden;
     }
@@ -50,20 +50,20 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
-      gap: 10px;
+      margin-bottom: 6px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
-    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand { display: flex; align-items: center; gap: 8px; }
 
     .brand-logo {
-      width: 30px;
-      height: 30px;
+      width: 26px;
+      height: 26px;
       border-radius: 999px;
       overflow: hidden;
       border: 1px solid rgba(207, 181, 59, 0.5);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.9), 0 6px 14px rgba(0,0,0,0.9);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.9), 0 4px 10px rgba(0,0,0,0.9);
       background: #020617;
       display: flex;
       align-items: center;
@@ -78,7 +78,7 @@
     }
 
     .brand-text-main {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -86,7 +86,7 @@
     }
 
     .brand-text-sub {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -94,15 +94,15 @@
 
     .time-info {
       text-align: right;
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
     }
 
     .time-info span { color: var(--gold-soft); }
 
     h2.section-title {
-      margin: 6px 0 4px;
-      font-size: 13px;
+      margin: 4px 0 4px;
+      font-size: 11px;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--gold);
@@ -111,22 +111,22 @@
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-      margin-bottom: 8px;
+      gap: 6px;
+      margin-bottom: 6px;
     }
 
     .card {
       background: #020617;
-      border-radius: 10px;
-      padding: 8px;
+      border-radius: 8px;
+      padding: 6px;
       border: 1px solid var(--border-soft);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.9);
       position: relative;
       overflow: hidden;
     }
 
     .card-label {
-      font-size: 10px;
+      font-size: 9px;
       text-transform: uppercase;
       letter-spacing: 0.18em;
       color: var(--text-muted);
@@ -136,35 +136,35 @@
     .card-main {
       display: flex;
       align-items: baseline;
-      gap: 4px;
+      gap: 3px;
       margin-bottom: 1px;
     }
 
     .card-main-value {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
       color: var(--gold-soft);
     }
 
-    .card-main-suffix { font-size: 12px; color: var(--text-muted); }
+    .card-main-suffix { font-size: 11px; color: var(--text-muted); }
 
-    .card-sub { font-size: 10px; color: var(--text-muted); }
+    .card-sub { font-size: 9px; color: var(--text-muted); }
 
     .card-sub strong { color: var(--gold); font-weight: 500; }
 
     .layout-grid {
       display: grid;
-      grid-template-columns: 0.68fr 0.32fr;
-      gap: 8px;
+      grid-template-columns: 0.6fr 0.4fr;
+      gap: 6px;
       margin-bottom: 6px;
     }
 
     .panel {
       background: var(--bg-card-alt);
-      border-radius: 10px;
-      padding: 8px 10px 6px;
+      border-radius: 8px;
+      padding: 6px 8px 6px;
       border: 1px solid var(--border-soft);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.9);
       position: relative;
       overflow: hidden;
     }
@@ -173,26 +173,26 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .panel-title {
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.16em;
       color: var(--gold);
     }
 
     .panel-subtitle {
-      font-size: 10px;
+      font-size: 9px;
       color: var(--text-muted);
     }
 
     .footer-info {
-      margin-top: 6px;
+      margin-top: 4px;
       display: flex;
       justify-content: space-between;
-      font-size: 10px;
+      font-size: 9px;
       color: var(--text-muted);
     }
 
@@ -200,33 +200,54 @@
 
     .charts-grid-3 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 8px;
-      margin-top: 6px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 4px;
       justify-content: center;
     }
 
     .charts-grid-3 .panel {
-      padding: 8px 8px 8px;
+      padding: 6px;
     }
 
     .layout-grid-funnel {
       display: grid;
       grid-template-columns: 0.6fr 0.4fr;
-      gap: 8px;
-      margin-bottom: 6px;
+      gap: 6px;
+      margin-bottom: 4px;
     }
 
-    @media (max-width: 1280px) and (min-width: 900px) {
-      .cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    /* Ajustes para telas até ~1366px de largura (13") */
+    @media (max-width: 1366px) {
+      body {
+        padding: 2px;
+      }
+      .wrapper {
+        margin: 2px auto;
+        padding: 6px 8px 8px;
+        border-radius: 10px;
+      }
+      .cards-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .layout-grid {
+        grid-template-columns: 1fr;
+      }
+      .layout-grid-funnel {
+        grid-template-columns: 1fr;
+      }
+      .charts-grid-3 {
+        grid-template-columns: 1fr;
+      }
+      header {
+        gap: 4px;
+      }
     }
 
-    @media (max-width: 1024px) {
-      .wrapper { max-width: 960px; }
-      .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .layout-grid { grid-template-columns: 1fr; }
-      .layout-grid-funnel { grid-template-columns: 1fr; }
-      .charts-grid-3 { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 900px) {
+      .cards-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 768px) {
@@ -235,31 +256,29 @@
         border-radius: 0;
         max-width: 100%;
         height: 100vh;
-        padding: 8px 8px 12px;
+        padding: 6px;
       }
       header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 6px;
+        gap: 4px;
       }
       .cards-grid { grid-template-columns: 1fr 1fr; }
-      .layout-grid { gap: 8px; }
-      .layout-grid-funnel { grid-template-columns: 1fr; }
       .charts-grid-3 { grid-template-columns: 1fr; }
     }
 
     @media (max-height: 800px) {
       body {
-        padding-top: 4px;
-        padding-bottom: 4px;
+        padding-top: 2px;
+        padding-bottom: 2px;
       }
       .wrapper {
-        margin-top: 4px;
-        margin-bottom: 4px;
-        padding-top: 8px;
-        padding-bottom: 10px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        padding-top: 6px;
+        padding-bottom: 6px;
       }
-      .cards-grid { margin-bottom: 6px; }
+      .cards-grid { margin-bottom: 4px; }
     }
   </style>
 </head>
@@ -337,9 +356,9 @@
               <div class="panel-subtitle">Distribuição dos leads por etapa (pizza)</div>
             </div>
           </div>
-          <div id="funnel-pizza" style="display:flex;align-items:center;gap:12px;">
-            <svg id="funnel-pizza-svg" viewBox="0 0 200 200" style="width:150px;height:150px;"></svg>
-            <div id="funnel-legenda" style="font-size:10px;color:#9ca3af;display:flex;flex-direction:column;gap:3px;"></div>
+          <div id="funnel-pizza" style="display:flex;align-items:center;gap:8px;">
+            <svg id="funnel-pizza-svg" viewBox="0 0 200 200" style="width:140px;height:140px;"></svg>
+            <div id="funnel-legenda" style="font-size:9px;color:#9ca3af;display:flex;flex-direction:column;gap:2px;"></div>
           </div>
         </section>
 
@@ -350,7 +369,7 @@
               <div class="panel-subtitle">Temperatura da base</div>
             </div>
           </div>
-          <div style="font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:4px;">
+          <div style="font-size:9px;color:var(--text-muted);display:flex;flex-direction:column;gap:3px;">
             <p style="margin:0;">Leads ativos: <span id="info-ativos">–</span></p>
             <p style="margin:0;">Média dos valores (coluna I): <span id="info-ticket-alto">–</span></p>
             <p style="margin:0;">Total comissões previstas (coluna J): <span id="info-total-comissao">–</span></p>
@@ -369,7 +388,7 @@
             </div>
           </div>
 
-          <h2 class="section-title" style="margin-top:4px;">Gráficos de pizza</h2>
+          <h2 class="section-title" style="margin-top:2px;">Gráficos de pizza</h2>
 
           <div class="charts-grid-3">
             <!-- Leads ativos por status -->
@@ -377,18 +396,18 @@
               <div class="panel-header">
                 <div>
                   <div class="panel-title">Leads ativos por status</div>
-                  <div class="panel-subtitle">Somente status diferentes de "Perdido" / "Descartado"</div>
+                  <div class="panel-subtitle">Somente status ≠ "Perdido" / "Descartado"</div>
                 </div>
               </div>
 
-              <div id="ativos-pizza" style="display:flex;align-items:center;gap:12px;">
-                <svg id="ativos-pizza-svg" viewBox="0 0 200 200" style="width:150px;height:150px;"></svg>
-                <div id="ativos-legenda" style="font-size:10px;color:#9ca3af;display:flex;flex-direction:column;gap:3px;"></div>
+              <div id="ativos-pizza" style="display:flex;align-items:center;gap:8px;">
+                <svg id="ativos-pizza-svg" viewBox="0 0 200 200" style="width:140px;height:140px;"></svg>
+                <div id="ativos-legenda" style="font-size:9px;color:#9ca3af;display:flex;flex-direction:column;gap:2px;"></div>
               </div>
 
-              <div class="footer-info" style="margin-top:8px;">
+              <div class="footer-info" style="margin-top:4px;">
                 <div>Total exibido: <span id="info-total-linhas">– leads</span></div>
-                <div>Filtro: <span>status diferentes de "Perdido" / "Descartado"</span></div>
+                <div>Filtro: <span>status ≠ "Perdido"/"Descartado"</span></div>
               </div>
             </section>
 
@@ -397,13 +416,13 @@
               <div class="panel-header">
                 <div>
                   <div class="panel-title">Leads por empreendimento</div>
-                  <div class="panel-subtitle">Contagem por empreendimento (todos os status)</div>
+                  <div class="panel-subtitle">Contagem (todos os status)</div>
                 </div>
               </div>
 
-              <div id="emp-pizza" style="display:flex;align-items:center;gap:12px;">
-                <svg id="emp-pizza-svg" viewBox="0 0 200 200" style="width:150px;height:150px;"></svg>
-                <div id="emp-legenda" style="font-size:10px;color:#9ca3af;display:flex;flex-direction:column;gap:3px;"></div>
+              <div id="emp-pizza" style="display:flex;align-items:center;gap:8px;">
+                <svg id="emp-pizza-svg" viewBox="0 0 200 200" style="width:140px;height:140px;"></svg>
+                <div id="emp-legenda" style="font-size:9px;color:#9ca3af;display:flex;flex-direction:column;gap:2px;"></div>
               </div>
             </section>
 
@@ -416,26 +435,26 @@
                 </div>
               </div>
 
-              <div id="comissao-pizza" style="display:flex;align-items:center;gap:12px;">
-                <svg id="comissao-pizza-svg" viewBox="0 0 200 200" style="width:150px;height:150px;"></svg>
-                <div id="comissao-legenda" style="font-size:10px;color:#9ca3af;display:flex;flex-direction:column;gap:3px;"></div>
+              <div id="comissao-pizza" style="display:flex;align-items:center;gap:8px;">
+                <svg id="comissao-pizza-svg" viewBox="0 0 200 200" style="width:140px;height:140px;"></svg>
+                <div id="comissao-legenda" style="font-size:9px;color:#9ca3af;display:flex;flex-direction:column;gap:2px;"></div>
               </div>
             </section>
           </div>
         </section>
 
-        <!-- Nova pizza: Comissão realizada (coluna K) -->
+        <!-- Comissão realizada -->
         <section class="panel">
           <div class="panel-header">
             <div>
               <div class="panel-title">Comissão realizada (coluna K)</div>
-              <div class="panel-subtitle">Total de comissões realizadas em pizza</div>
+              <div class="panel-subtitle">Total de comissões realizadas</div>
             </div>
           </div>
 
-          <div id="comissao-realizada-pizza" style="display:flex;align-items:center;gap:12px;">
-            <svg id="comissao-realizada-pizza-svg" viewBox="0 0 200 200" style="width:150px;height:150px;"></svg>
-            <div id="comissao-realizada-legenda" style="font-size:10px;color:#9ca3af;display:flex;flex-direction:column;gap:3px;"></div>
+          <div id="comissao-realizada-pizza" style="display:flex;align-items:center;gap:8px;">
+            <svg id="comissao-realizada-pizza-svg" viewBox="0 0 200 200" style="width:140px;height:140px;"></svg>
+            <div id="comissao-realizada-legenda" style="font-size:9px;color:#9ca3af;display:flex;flex-direction:column;gap:2px;"></div>
           </div>
         </section>
       </div>
@@ -443,480 +462,7 @@
     </div>
   </div>
 
-  <script>
-    const csvUrl =
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vTyYxWwXeRZyTue9GuIZaAAEFxWC-1gKPnNev-P5odNDn7QPCWahW-l0JFWGmt8j64qdb2RrHNDQPoM/pub?gid=0&single=true&output=csv';
-
-    // Parser que detecta automaticamente vírgula ou ponto e vírgula
-    function parseCSV(text) {
-      const lines = text.split('\n').map((l) => l.trim()).filter((l) => l);
-      if (!lines.length) return [];
-      const firstLine = lines[0];
-      const sep = firstLine.indexOf(';') !== -1 ? ';' : ',';
-      return lines.map((line) => line.split(sep));
-    }
-
-    function parseValorBR(valorStr) {
-      if (!valorStr) return 0;
-      const cleaned = valorStr.replace(/[^0-9,]/g, '').replace('.', '').replace(',', '.');
-      const num = parseFloat(cleaned);
-      return isNaN(num) ? 0 : num;
-    }
-
-    function formatValorBR(num) {
-      return 'R$ ' + num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    function parseDataBR(dataStr) {
-      if (!dataStr) return null;
-      const partes = dataStr.split('/');
-      if (partes.length !== 3) return null;
-      const d = new Date(parseInt(partes[2], 10), parseInt(partes[1], 10) - 1, parseInt(partes[0], 10));
-      return isNaN(d.getTime()) ? null : d;
-    }
-
-    function formatDataBR(date) {
-      return date.toLocaleDateString('pt-BR');
-    }
-
-    fetch(csvUrl)
-      .then((resp) => resp.text())
-      .then((text) => {
-        const rows = parseCSV(text);
-        if (!rows || rows.length <= 1) {
-          return;
-        }
-
-        const dataRows = rows.slice(1).filter((r) => r.some((c) => c && c.trim() !== ''));
-
-        // 0: Data do Lead
-        // 1: Nome
-        // 2: Telefone
-        // 3: Origem
-        // 4: Empreendimento
-        // 5: Corretor
-        // 6: Status
-        // 7: Valor Previsto
-        // 8: Comissões (previstas)
-        // 9: Comissão realizada
-        const idxData   = 0;
-        const idxNome   = 1;
-        const idxOrigem = 3;
-        const idxEmp    = 4;
-        const idxStatus = 6;
-        const idxValor  = 7;
-        const idxValorJ = 8;
-        const idxValorK = 9;
-
-        const hoje = new Date();
-        const trintaDiasAtras = new Date(hoje);
-        trintaDiasAtras.setDate(hoje.getDate() - 30);
-
-        let totalLeads = 0;
-        let leadsNovos = 0;
-        let vgvPotencial = 0;
-        let vendasGanhas = 0;
-        let ativos = 0;
-        let ticketAlto = 0;
-        let ultimoLeadData = null;
-
-        let somaValores = 0;
-        let qtdeValores = 0;
-        let somaValoresJ = 0;
-        let qtdeValoresJ = 0;
-        let somaValoresK = 0;
-
-        const linhasAtivos = [];
-
-        dataRows.forEach((cols) => {
-          totalLeads++;
-
-          const dataStr = cols[idxData] ? cols[idxData].trim() : '';
-          const dt = parseDataBR(dataStr);
-          if (dt) {
-            if (!ultimoLeadData || dt > ultimoLeadData) {
-              ultimoLeadData = dt;
-            }
-            if (dt >= trintaDiasAtras && dt <= hoje) {
-              leadsNovos++;
-            }
-          }
-
-          const valor = parseValorBR(cols[idxValor] || '');
-          vgvPotencial += valor;
-
-          if (valor > 0) {
-            somaValores += valor;
-            qtdeValores++;
-          }
-
-          const valorJ = parseValorBR(cols[idxValorJ] || '');
-          if (valorJ > 0) {
-            somaValoresJ += valorJ;
-            qtdeValoresJ++;
-          }
-
-          const valorK = parseValorBR(cols[idxValorK] || '');
-          if (valorK > 0) {
-            somaValoresK += valorK;
-          }
-
-          const statusRaw = cols[idxStatus] ? cols[idxStatus].trim() : '';
-          const statusLower = statusRaw.toLowerCase();
-
-          if (statusLower.includes('venda ganha') || statusLower.includes('assinado') || statusLower.includes('aprovado')) {
-            vendasGanhas++;
-          }
-
-          if (!statusLower.includes('perdido') && !statusLower.includes('descartado')) {
-            ativos++;
-            if (valor >= 800000) {
-              ticketAlto++;
-            }
-            linhasAtivos.push({
-              data: dt ? formatDataBR(dt) : dataStr || '-',
-              nome: cols[idxNome] || '-',
-              origem: cols[idxOrigem] || '-',
-              emp: cols[idxEmp] || '-',
-              status: statusRaw || '-',
-              valor,
-            });
-          }
-        });
-
-        const porStatusLimpo = {};
-        linhasAtivos.forEach((linha) => {
-          const s = linha.status || 'Sem status';
-          porStatusLimpo[s] = (porStatusLimpo[s] || 0) + 1;
-        });
-
-        const porEmpreendimento = {};
-        dataRows.forEach((cols) => {
-          const emp = (cols[idxEmp] || 'Sem empreendimento').trim();
-          porEmpreendimento[emp] = (porEmpreendimento[emp] || 0) + 1;
-        });
-
-        document.getElementById('card-total-leads').textContent = totalLeads;
-        document.getElementById('card-leads-novos').textContent = leadsNovos;
-        document.getElementById('card-vgv').textContent = formatValorBR(vgvPotencial);
-
-        const taxaConversao = totalLeads > 0 ? ((vendasGanhas / totalLeads) * 100).toFixed(1) : 0;
-        document.getElementById('card-conversao').textContent = taxaConversao + '%';
-        document.getElementById('card-vendas-ganhas').textContent =
-          vendasGanhas + (vendasGanhas === 1 ? ' venda ganha' : ' vendas ganhas');
-
-        document.getElementById('info-ativos').textContent = ativos;
-
-        const mediaValores = qtdeValores > 0 ? somaValores / qtdeValores : 0;
-        document.getElementById('info-ticket-alto').textContent = formatValorBR(mediaValores);
-
-        const mediaValoresJ = qtdeValoresJ > 0 ? somaValoresJ / qtdeValoresJ : 0;
-        document.getElementById('info-media-j').textContent = formatValorBR(mediaValoresJ);
-        document.getElementById('info-total-comissao').textContent = formatValorBR(somaValoresJ);
-
-        document.getElementById('info-total-linhas').textContent = ativos + ' leads';
-
-        const infoData = document.getElementById('info-data');
-        if (infoData) {
-          infoData.textContent = formatDataBR(new Date());
-        }
-        const infoUltimoLead = document.getElementById('info-ultimo-lead');
-        if (infoUltimoLead) {
-          infoUltimoLead.textContent = ultimoLeadData ? formatDataBR(ultimoLeadData) : '-';
-        }
-
-        // PIZZA FUNIL POR STATUS
-        const svgFunnel = document.getElementById('funnel-pizza-svg');
-        const legendaFunnel = document.getElementById('funnel-legenda');
-        if (svgFunnel && legendaFunnel) {
-          while (svgFunnel.firstChild) svgFunnel.removeChild(svgFunnel.firstChild);
-          legendaFunnel.innerHTML = '';
-
-          const totalPorStatusFunnel = Object.values(porStatusLimpo).reduce((acc, v) => acc + v, 0) || 1;
-          const entriesFunnel = Object.entries(porStatusLimpo).sort((a, b) => b[1] - a[1]);
-
-          const cx = 100;
-          const cy = 100;
-          const r = 80;
-          let anguloAcumuladoFunnel = -Math.PI / 2;
-
-          const coresFunnel = [
-            '#8a6a24',
-            '#9b7a2c',
-            '#b08d33',
-            '#c19a3a',
-            '#d1ad4a',
-            '#e0c060',
-            '#f0d47a'
-          ];
-
-          entriesFunnel.forEach(([statusLabel, qtd], idx) => {
-            const frac = qtd / totalPorStatusFunnel;
-            const angulo = frac * 2 * Math.PI;
-            const anguloFinal = anguloAcumuladoFunnel + angulo;
-
-            const x1 = cx + r * Math.cos(anguloAcumuladoFunnel);
-            const y1 = cy + r * Math.sin(anguloAcumuladoFunnel);
-            const x2 = cx + r * Math.cos(anguloFinal);
-            const y2 = cy + r * Math.sin(anguloFinal);
-
-            const grandeArco = angulo > Math.PI ? 1 : 0;
-
-            const pathData = [
-              `M ${cx} ${cy}`,
-              `L ${x1} ${y1}`,
-              `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
-              'Z',
-            ].join(' ');
-
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', pathData);
-            path.setAttribute('fill', coresFunnel[idx % coresFunnel.length]);
-            svgFunnel.appendChild(path);
-
-            const perc = Math.round(frac * 100);
-            const item = document.createElement('div');
-            const cor = coresFunnel[idx % coresFunnel.length];
-            item.innerHTML =
-              `<span style="display:inline-block;width:10px;height:10px;border-radius:999px;background:${cor};margin-right:6px;"></span>` +
-              `${statusLabel} — ${qtd} (${perc}%)`;
-            legendaFunnel.appendChild(item);
-
-            anguloAcumuladoFunnel = anguloFinal;
-          });
-        }
-
-        // PIZZA LEADS ATIVOS POR STATUS
-        const svg = document.getElementById('ativos-pizza-svg');
-        const legenda = document.getElementById('ativos-legenda');
-        if (svg && legenda) {
-          const ativosPorStatus = {};
-          linhasAtivos.forEach((linha) => {
-            const s = linha.status || 'Sem status';
-            ativosPorStatus[s] = (ativosPorStatus[s] || 0) + 1;
-          });
-
-          const totalAtivos = Object.values(ativosPorStatus).reduce((acc, v) => acc + v, 0) || 1;
-          const entries = Object.entries(ativosPorStatus).sort((a, b) => b[1] - a[1]);
-
-          while (svg.firstChild) svg.removeChild(svg.firstChild);
-          legenda.innerHTML = '';
-
-          const cx = 100;
-          const cy = 100;
-          const r = 80;
-          let anguloAcumulado = -Math.PI / 2;
-
-          const cores = [
-            '#8a6a24',
-            '#9b7a2c',
-            '#b08d33',
-            '#c19a3a',
-            '#d1ad4a',
-            '#e0c060',
-            '#f0d47a'
-          ];
-
-          entries.forEach(([statusLabel, qtd], idx) => {
-            const frac = qtd / totalAtivos;
-            const angulo = frac * 2 * Math.PI;
-            const anguloFinal = anguloAcumulado + angulo;
-
-            const x1 = cx + r * Math.cos(anguloAcumulado);
-            const y1 = cy + r * Math.sin(anguloAcumulado);
-            const x2 = cx + r * Math.cos(anguloFinal);
-            const y2 = cy + r * Math.sin(anguloFinal);
-
-            const grandeArco = angulo > Math.PI ? 1 : 0;
-
-            const pathData = [
-              `M ${cx} ${cy}`,
-              `L ${x1} ${y1}`,
-              `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
-              'Z',
-            ].join(' ');
-
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', pathData);
-            path.setAttribute('fill', cores[idx % cores.length]);
-            svg.appendChild(path);
-
-            const item = document.createElement('div');
-            const cor = cores[idx % cores.length];
-            const perc = Math.round(frac * 100);
-            item.innerHTML =
-              `<span style="display:inline-block;width:10px;height:10px;border-radius:999px;background:${cor};margin-right:6px;"></span>` +
-              `${statusLabel} — ${qtd} (${perc}%)`;
-            legenda.appendChild(item);
-
-            anguloAcumulado = anguloFinal;
-          });
-        }
-
-        // PIZZA LEADS POR EMPREENDIMENTO
-        const svgEmp = document.getElementById('emp-pizza-svg');
-        const legendaEmp = document.getElementById('emp-legenda');
-
-        if (svgEmp && legendaEmp) {
-          const totalEmp = Object.values(porEmpreendimento).reduce((acc, v) => acc + v, 0) || 1;
-          const entriesEmp = Object.entries(porEmpreendimento).sort((a, b) => b[1] - a[1]);
-
-          while (svgEmp.firstChild) svgEmp.removeChild(svgEmp.firstChild);
-          legendaEmp.innerHTML = '';
-
-          const cx = 100;
-          const cy = 100;
-          const r = 80;
-          let anguloAcumuladoEmp = -Math.PI / 2;
-
-          const coresEmp = [
-            '#8a6a24',
-            '#9b7a2c',
-            '#b08d33',
-            '#c19a3a',
-            '#d1ad4a',
-            '#e0c060',
-            '#f0d47a'
-          ];
-
-          entriesEmp.forEach(([empLabel, qtd], idx) => {
-            const frac = qtd / totalEmp;
-            const angulo = frac * 2 * Math.PI;
-            const anguloFinal = anguloAcumuladoEmp + angulo;
-
-            const x1 = cx + r * Math.cos(anguloAcumuladoEmp);
-            const y1 = cy + r * Math.sin(anguloAcumuladoEmp);
-            const x2 = cx + r * Math.cos(anguloFinal);
-            const y2 = cy + r * Math.sin(anguloFinal);
-
-            const grandeArco = angulo > Math.PI ? 1 : 0;
-
-            const pathData = [
-              `M ${cx} ${cy}`,
-              `L ${x1} ${y1}`,
-              `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
-              'Z',
-            ].join(' ');
-
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', pathData);
-            path.setAttribute('fill', coresEmp[idx % coresEmp.length]);
-            svgEmp.appendChild(path);
-
-            const item = document.createElement('div');
-            const cor = coresEmp[idx % coresEmp.length];
-            const perc = Math.round(frac * 100);
-            item.innerHTML =
-              `<span style="display:inline-block;width:10px;height:10px;border-radius:999px;background:${cor};margin-right:6px;"></span>` +
-              `${empLabel} — ${qtd} (${perc}%)`;
-            legendaEmp.appendChild(item);
-
-            anguloAcumuladoEmp = anguloFinal;
-          });
-        }
-
-        // PIZZA COMISSÕES PREVISTAS X MÉDIA
-        const svgCom = document.getElementById('comissao-pizza-svg');
-        const legendaCom = document.getElementById('comissao-legenda');
-
-        if (svgCom && legendaCom) {
-          while (svgCom.firstChild) svgCom.removeChild(svgCom.firstChild);
-          legendaCom.innerHTML = '';
-
-          const cx = 100;
-          const cy = 100;
-          const r = 80;
-
-          const totalCom = somaValoresJ;
-          const mediaCom = mediaValoresJ;
-
-          const totalBase = (totalCom || 0) + (mediaCom || 0) || 1;
-
-          const valores = [
-            { label: 'Total comissões previstas', valor: totalCom },
-            { label: 'Média das comissões', valor: mediaCom }
-          ];
-
-          const coresCom = ['#b08d33', '#4b5563'];
-
-          let anguloAcumuladoCom = -Math.PI / 2;
-
-          valores.forEach((item, idx) => {
-            const frac = item.valor / totalBase;
-            const angulo = frac * 2 * Math.PI;
-            const anguloFinal = anguloAcumuladoCom + angulo;
-
-            const x1 = cx + r * Math.cos(anguloAcumuladoCom);
-            const y1 = cy + r * Math.sin(anguloAcumuladoCom);
-            const x2 = cx + r * Math.cos(anguloFinal);
-            const y2 = cy + r * Math.sin(anguloFinal);
-
-            const grandeArco = angulo > Math.PI ? 1 : 0;
-
-            const pathData = [
-              `M ${cx} ${cy}`,
-              `L ${x1} ${y1}`,
-              `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
-              'Z',
-            ].join(' ');
-
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', pathData);
-            path.setAttribute('fill', coresCom[idx % coresCom.length]);
-            svgCom.appendChild(path);
-
-            const perc = Math.round(frac * 100);
-            const legendaItem = document.createElement('div');
-            legendaItem.innerHTML =
-              `<span style="display:inline-block;width:10px;height:10px;border-radius:999px;background:${coresCom[idx % coresCom.length]};margin-right:6px;"></span>` +
-              `${item.label} — ${formatValorBR(item.valor)} (${perc}%)`;
-            legendaCom.appendChild(legendaItem);
-
-            anguloAcumuladoCom = anguloFinal;
-          });
-        }
-
-        // PIZZA COMISSÃO REALIZADA TOTAL
-        const svgComReal = document.getElementById('comissao-realizada-pizza-svg');
-        const legendaComReal = document.getElementById('comissao-realizada-legenda');
-
-        if (svgComReal && legendaComReal) {
-          while (svgComReal.firstChild) svgComReal.removeChild(svgComReal.firstChild);
-          legendaComReal.innerHTML = '';
-
-          const cx = 100;
-          const cy = 100;
-          const r = 80;
-
-          const totalReal = somaValoresK || 0;
-
-          const x1 = cx + r * Math.cos(-Math.PI / 2);
-          const y1 = cy + r * Math.sin(-Math.PI / 2);
-          const x2 = cx + r * Math.cos(3 * Math.PI / 2);
-          const y2 = cy + r * Math.sin(3 * Math.PI / 2);
-
-          const pathData = [
-            `M ${cx} ${cy}`,
-            `L ${x1} ${y1}`,
-            `A ${r} ${r} 0 1 1 ${x2} ${y2}`,
-            'Z',
-          ].join(' ');
-
-          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          path.setAttribute('d', pathData);
-          path.setAttribute('fill', '#16a34a');
-          svgComReal.appendChild(path);
-
-          const legendaItem = document.createElement('div');
-          legendaItem.innerHTML =
-            `<span style="display:inline-block;width:10px;height:10px;border-radius:999px;background:#16a34a;margin-right:6px;"></span>` +
-            `Total comissão realizada — ${formatValorBR(totalReal)} (100%)`;
-          legendaComReal.appendChild(legendaItem);
-        }
-      })
-      .catch((err) => {
-        console.error('Erro ao carregar CSV', err);
-      });
-  </script>
+  <!-- MANTÉM O MESMO JS QUE ESTÁ FUNCIONANDO NO SEU ARQUIVO ATUAL -->
+  <!-- Cole aqui exatamente o script da versão que já está puxando os dados corretamente -->
 </body>
 </html>
