@@ -241,11 +241,17 @@
 
     .footer-info span { color: var(--gold-soft); }
 
-    .charts-grid {
+    /* grade com os 3 gráficos pizza */
+    .charts-grid-3 {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 8px;
       margin-top: 6px;
+      justify-content: center;
+    }
+
+    .charts-grid-3 .panel {
+      padding: 8px 8px 8px;
     }
 
     @media (max-width: 1280px) and (min-width: 900px) {
@@ -256,7 +262,7 @@
       .wrapper { max-width: 960px; }
       .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .layout-grid { grid-template-columns: 1fr; }
-      .charts-grid { grid-template-columns: 1fr; }
+      .charts-grid-3 { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 768px) {
@@ -274,7 +280,7 @@
       }
       .cards-grid { grid-template-columns: 1fr 1fr; }
       .layout-grid { gap: 8px; }
-      .charts-grid { grid-template-columns: 1fr; }
+      .charts-grid-3 { grid-template-columns: 1fr; }
     }
 
     @media (max-height: 800px) {
@@ -386,9 +392,10 @@
         </section>
       </div>
 
-      <h2 class="section-title">Leads ativos e empreendimentos</h2>
+      <h2 class="section-title">Gráficos de pizza</h2>
 
-      <div class="charts-grid">
+      <div class="charts-grid-3">
+        <!-- Leads ativos por status -->
         <section class="panel">
           <div class="panel-header">
             <div>
@@ -408,6 +415,7 @@
           </div>
         </section>
 
+        <!-- Leads por empreendimento -->
         <section class="panel">
           <div class="panel-header">
             <div>
@@ -421,23 +429,22 @@
             <div id="emp-legenda" style="font-size:10px;color:#9ca3af;display:flex;flex-direction:column;gap:3px;"></div>
           </div>
         </section>
-      </div>
 
-      <h2 class="section-title">Comissões previstas</h2>
-
-      <section class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Comissões previstas x média</div>
-            <div class="panel-subtitle">Distribuição em pizza (coluna J)</div>
+        <!-- Comissões previstas x média -->
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Comissões previstas x média</div>
+              <div class="panel-subtitle">Distribuição em pizza (coluna J)</div>
+            </div>
           </div>
-        </div>
 
-        <div id="comissao-pizza" style="display:flex;align-items:center;gap:12px;">
-          <svg id="comissao-pizza-svg" viewBox="0 0 200 200" style="width:150px;height:150px;"></svg>
-          <div id="comissao-legenda" style="font-size:10px;color:#9ca3af;display:flex;flex-direction:column;gap:3px;"></div>
-        </div>
-      </section>
+          <div id="comissao-pizza" style="display:flex;align-items:center;gap:12px;">
+            <svg id="comissao-pizza-svg" viewBox="0 0 200 200" style="width:150px;height:150px;"></svg>
+            <div id="comissao-legenda" style="font-size:10px;color:#9ca3af;display:flex;flex-direction:column;gap:3px;"></div>
+          </div>
+        </section>
+      </div>
 
     </div>
   </div>
