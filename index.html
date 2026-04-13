@@ -16,9 +16,7 @@
       --border-soft: #b08d33;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -46,10 +44,7 @@
       overflow: hidden;
     }
 
-    .wrapper-inner {
-      position: relative;
-      z-index: 1;
-    }
+    .wrapper-inner { position: relative; z-index: 1; }
 
     header {
       display: flex;
@@ -60,11 +55,7 @@
       flex-wrap: wrap;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .brand { display: flex; align-items: center; gap: 10px; }
 
     .brand-logo {
       width: 30px;
@@ -107,9 +98,7 @@
       color: var(--text-muted);
     }
 
-    .time-info span {
-      color: var(--gold-soft);
-    }
+    .time-info span { color: var(--gold-soft); }
 
     h2.section-title {
       margin: 6px 0 4px;
@@ -157,20 +146,11 @@
       color: var(--gold-soft);
     }
 
-    .card-main-suffix {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
+    .card-main-suffix { font-size: 12px; color: var(--text-muted); }
 
-    .card-sub {
-      font-size: 10px;
-      color: var(--text-muted);
-    }
+    .card-sub { font-size: 10px; color: var(--text-muted); }
 
-    .card-sub strong {
-      color: var(--gold);
-      font-weight: 500;
-    }
+    .card-sub strong { color: var(--gold); font-weight: 500; }
 
     .layout-grid {
       display: grid;
@@ -259,9 +239,7 @@
       color: var(--text-muted);
     }
 
-    .footer-info span {
-      color: var(--gold-soft);
-    }
+    .footer-info span { color: var(--gold-soft); }
 
     .charts-grid {
       display: grid;
@@ -271,24 +249,14 @@
     }
 
     @media (max-width: 1280px) and (min-width: 900px) {
-      .cards-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
+      .cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
 
     @media (max-width: 1024px) {
-      .wrapper {
-        max-width: 960px;
-      }
-      .cards-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .layout-grid {
-        grid-template-columns: 1fr;
-      }
-      .charts-grid {
-        grid-template-columns: 1fr;
-      }
+      .wrapper { max-width: 960px; }
+      .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .layout-grid { grid-template-columns: 1fr; }
+      .charts-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 768px) {
@@ -304,15 +272,9 @@
         align-items: flex-start;
         gap: 6px;
       }
-      .cards-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-      .layout-grid {
-        gap: 8px;
-      }
-      .charts-grid {
-        grid-template-columns: 1fr;
-      }
+      .cards-grid { grid-template-columns: 1fr 1fr; }
+      .layout-grid { gap: 8px; }
+      .charts-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-height: 800px) {
@@ -326,9 +288,7 @@
         padding-top: 8px;
         padding-bottom: 10px;
       }
-      .cards-grid {
-        margin-bottom: 6px;
-      }
+      .cards-grid { margin-bottom: 6px; }
     }
   </style>
 </head>
@@ -419,6 +379,7 @@
           <div style="font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:4px;">
             <p style="margin:0;">Leads ativos: <span id="info-ativos">–</span></p>
             <p style="margin:0;">Média dos valores (coluna I): <span id="info-ticket-alto">–</span></p>
+            <p style="margin:0;">Total comissões previstas (coluna J): <span id="info-total-comissao">–</span></p>
             <p style="margin:0;">Média dos valores (coluna J): <span id="info-media-j">–</span></p>
             <p style="margin:0;">Último lead em: <span id="info-ultimo-lead">–</span></p>
           </div>
@@ -461,6 +422,22 @@
           </div>
         </section>
       </div>
+
+      <h2 class="section-title">Comissões previstas</h2>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Comissões previstas x média</div>
+            <div class="panel-subtitle">Distribuição em pizza (coluna J)</div>
+          </div>
+        </div>
+
+        <div id="comissao-pizza" style="display:flex;align-items:center;gap:12px;">
+          <svg id="comissao-pizza-svg" viewBox="0 0 200 200" style="width:150px;height:150px;"></svg>
+          <div id="comissao-legenda" style="font-size:10px;color:#9ca3af;display:flex;flex-direction:column;gap:3px;"></div>
+        </div>
+      </section>
 
     </div>
   </div>
@@ -545,7 +522,7 @@
         let ticketAlto = 0;
         let ultimoLeadData = null;
 
-        // acumuladores para médias
+        // acumuladores para médias / total comissões
         let somaValores = 0;
         let qtdeValores = 0;
         let somaValoresJ = 0;
@@ -576,7 +553,7 @@
             qtdeValores++;
           }
 
-          // média coluna J
+          // coluna J: comissões previstas
           const valorJ = parseValorBR(cols[idxValorJ] || '');
           if (valorJ > 0) {
             somaValoresJ += valorJ;
@@ -634,6 +611,7 @@
 
         const mediaValoresJ = qtdeValoresJ > 0 ? somaValoresJ / qtdeValoresJ : 0;
         document.getElementById('info-media-j').textContent = formatValorBR(mediaValoresJ);
+        document.getElementById('info-total-comissao').textContent = formatValorBR(somaValoresJ);
 
         document.getElementById('info-total-linhas').textContent = ativos + ' leads';
 
@@ -684,6 +662,7 @@
           funnelContainer.appendChild(row);
         });
 
+        // PIZZA LEADS ATIVOS POR STATUS
         const svg = document.getElementById('ativos-pizza-svg');
         const legenda = document.getElementById('ativos-legenda');
         if (svg && legenda) {
@@ -750,6 +729,7 @@
           });
         }
 
+        // PIZZA LEADS POR EMPREENDIMENTO
         const svgEmp = document.getElementById('emp-pizza-svg');
         const legendaEmp = document.getElementById('emp-legenda');
 
@@ -808,6 +788,68 @@
             legendaEmp.appendChild(item);
 
             anguloAcumuladoEmp = anguloFinal;
+          });
+        }
+
+        // PIZZA COMISSÕES PREVISTAS X MÉDIA
+        const svgCom = document.getElementById('comissao-pizza-svg');
+        const legendaCom = document.getElementById('comissao-legenda');
+
+        if (svgCom && legendaCom) {
+          while (svgCom.firstChild) svgCom.removeChild(svgCom.firstChild);
+          legendaCom.innerHTML = '';
+
+          const cx = 100;
+          const cy = 100;
+          const r = 80;
+
+          const totalCom = somaValoresJ;
+          const mediaCom = mediaValoresJ;
+
+          // evita divisão por zero
+          const totalBase = (totalCom || 0) + (mediaCom || 0) || 1;
+
+          const valores = [
+            { label: 'Total comissões previstas', valor: totalCom },
+            { label: 'Média das comissões', valor: mediaCom }
+          ];
+
+          const coresCom = ['#b08d33', '#4b5563'];
+
+          let anguloAcumuladoCom = -Math.PI / 2;
+
+          valores.forEach((item, idx) => {
+            const frac = item.valor / totalBase;
+            const angulo = frac * 2 * Math.PI;
+            const anguloFinal = anguloAcumuladoCom + angulo;
+
+            const x1 = cx + r * Math.cos(anguloAcumuladoCom);
+            const y1 = cy + r * Math.sin(anguloAcumuladoCom);
+            const x2 = cx + r * Math.cos(anguloFinal);
+            const y2 = cy + r * Math.sin(anguloFinal);
+
+            const grandeArco = angulo > Math.PI ? 1 : 0;
+
+            const pathData = [
+              `M ${cx} ${cy}`,
+              `L ${x1} ${y1}`,
+              `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
+              'Z',
+            ].join(' ');
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', pathData);
+            path.setAttribute('fill', coresCom[idx % coresCom.length]);
+            svgCom.appendChild(path);
+
+            const perc = Math.round(frac * 100);
+            const legendaItem = document.createElement('div');
+            legendaItem.innerHTML =
+              `<span style="display:inline-block;width:10px;height:10px;border-radius:999px;background:${coresCom[idx % coresCom.length]};margin-right:6px;"></span>` +
+              `${item.label} — ${formatValorBR(item.valor)} (${perc}%)`;
+            legendaCom.appendChild(legendaItem);
+
+            anguloAcumuladoCom = anguloFinal;
           });
         }
       })
