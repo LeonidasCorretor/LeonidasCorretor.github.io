@@ -505,14 +505,15 @@
 
         const dataRows = rows.slice(1).filter((r) => r.some((c) => c && c.trim() !== ''));
 
-        const idxData = 1;
-        const idxNome = 2;
-        const idxOrigem = 4;
-        const idxEmp = 5;
-        const idxStatus = 7;
-        const idxValor = 8;   // coluna I
-        const idxValorJ = 9;  // coluna J
-        const idxValorK = 10; // coluna K (comissão realizada)
+        // índices ajustados para sua ordem de colunas
+        const idxData = 0;      // Data
+        const idxNome = 1;      // Nome
+        const idxOrigem = 3;    // Origem
+        const idxEmp = 4;       // Empreendimento
+        const idxStatus = 6;    // Status
+        const idxValor = 7;     // Valor previsto
+        const idxValorJ = 8;    // Comissão prevista
+        const idxValorK = 10;   // Comissão realizada (ajuste se estiver em outra posição)
 
         const hoje = new Date();
         const trintaDiasAtras = new Date(hoje);
@@ -526,12 +527,11 @@
         let ticketAlto = 0;
         let ultimoLeadData = null;
 
-        // acumuladores para médias / total comissões
         let somaValores = 0;
         let qtdeValores = 0;
         let somaValoresJ = 0;
         let qtdeValoresJ = 0;
-        let somaValoresK = 0; // total comissão realizada
+        let somaValoresK = 0;
 
         const linhasAtivos = [];
 
@@ -552,20 +552,17 @@
           const valor = parseValorBR(cols[idxValor] || '');
           vgvPotencial += valor;
 
-          // média coluna I
           if (valor > 0) {
             somaValores += valor;
             qtdeValores++;
           }
 
-          // coluna J: comissões previstas
           const valorJ = parseValorBR(cols[idxValorJ] || '');
           if (valorJ > 0) {
             somaValoresJ += valorJ;
             qtdeValoresJ++;
           }
 
-          // coluna K: comissões realizadas
           const valorK = parseValorBR(cols[idxValorK] || '');
           if (valorK > 0) {
             somaValoresK += valorK;
@@ -635,7 +632,7 @@
           infoUltimoLead.textContent = ultimoLeadData ? formatDataBR(ultimoLeadData) : '-';
         }
 
-        // PIZZA FUNIL POR STATUS (todos os status limpos)
+        // PIZZA FUNIL POR STATUS
         const svgFunnel = document.getElementById('funnel-pizza-svg');
         const legendaFunnel = document.getElementById('funnel-legenda');
         if (svgFunnel && legendaFunnel) {
@@ -900,7 +897,6 @@
 
           const totalReal = somaValoresK || 0;
 
-          // pizza simples com uma fatia cheia (100%)
           const x1 = cx + r * Math.cos(-Math.PI / 2);
           const y1 = cy + r * Math.sin(-Math.PI / 2);
           const x2 = cx + r * Math.cos(3 * Math.PI / 2);
