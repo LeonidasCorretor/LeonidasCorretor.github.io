@@ -419,6 +419,7 @@
           <div style="font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:4px;">
             <p style="margin:0;">Leads ativos: <span id="info-ativos">–</span></p>
             <p style="margin:0;">Média dos valores (coluna I): <span id="info-ticket-alto">–</span></p>
+            <p style="margin:0;">Média dos valores (coluna J): <span id="info-media-j">–</span></p>
             <p style="margin:0;">Último lead em: <span id="info-ultimo-lead">–</span></p>
           </div>
         </section>
@@ -529,7 +530,8 @@
         const idxOrigem = 4;
         const idxEmp = 5;
         const idxStatus = 7;
-        const idxValor = 8;
+        const idxValor = 8; // coluna I
+        const idxValorJ = 9; // coluna J
 
         const hoje = new Date();
         const trintaDiasAtras = new Date(hoje);
@@ -543,9 +545,11 @@
         let ticketAlto = 0;
         let ultimoLeadData = null;
 
-        // acumuladores para média da coluna I
+        // acumuladores para médias
         let somaValores = 0;
         let qtdeValores = 0;
+        let somaValoresJ = 0;
+        let qtdeValoresJ = 0;
 
         const linhasAtivos = [];
 
@@ -566,10 +570,17 @@
           const valor = parseValorBR(cols[idxValor] || '');
           vgvPotencial += valor;
 
-          // acumula para média (valores > 0)
+          // média coluna I
           if (valor > 0) {
             somaValores += valor;
             qtdeValores++;
+          }
+
+          // média coluna J
+          const valorJ = parseValorBR(cols[idxValorJ] || '');
+          if (valorJ > 0) {
+            somaValoresJ += valorJ;
+            qtdeValoresJ++;
           }
 
           const statusRaw = cols[idxStatus] ? cols[idxStatus].trim() : '';
@@ -620,6 +631,9 @@
 
         const mediaValores = qtdeValores > 0 ? somaValores / qtdeValores : 0;
         document.getElementById('info-ticket-alto').textContent = formatValorBR(mediaValores);
+
+        const mediaValoresJ = qtdeValoresJ > 0 ? somaValoresJ / qtdeValoresJ : 0;
+        document.getElementById('info-media-j').textContent = formatValorBR(mediaValoresJ);
 
         document.getElementById('info-total-linhas').textContent = ativos + ' leads';
 
