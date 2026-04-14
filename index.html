@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-fit-13inch-fonts+" />
+  <meta name="debug" content="versao-1307-fit-13inch-fonts+-bg-black" />
   <style>
     :root {
-      --bg-main: #050816;
+      --bg-main: #000000;
       --bg-card: #0b1120;
       --bg-card-alt: #020617;
       --gold: #b08d33;
@@ -26,14 +26,15 @@
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
+      /* fundo preto com leve brilho no centro */
+      background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
       color: #e5e7eb;
       display: flex;
       justify-content: center;
       align-items: stretch;
       height: 100vh;
       overflow: hidden;
-      font-size: 14px; /* base maior para leitura */
+      font-size: 14px;
     }
 
     .wrapper {
@@ -91,7 +92,7 @@
     }
 
     .brand-text-main {
-      font-size: 14px; /* maior */
+      font-size: 14px;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -99,7 +100,7 @@
     }
 
     .brand-text-sub {
-      font-size: 11px; /* maior */
+      font-size: 11px;
       color: var(--text-muted);
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -107,7 +108,7 @@
 
     .time-info {
       text-align: right;
-      font-size: 11px; /* maior */
+      font-size: 11px;
       color: var(--text-muted);
     }
 
@@ -115,7 +116,7 @@
 
     h2.section-title {
       margin: 4px 0 4px;
-      font-size: 11px; /* maior */
+      font-size: 11px;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--gold);
@@ -138,7 +139,7 @@
     }
 
     .card-label {
-      font-size: 11px; /* maior */
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.18em;
       color: var(--text-muted);
@@ -153,7 +154,7 @@
     }
 
     .card-main-value {
-      font-size: 20px; /* maior */
+      font-size: 20px;
       font-weight: 700;
       color: var(--gold-soft);
     }
@@ -189,14 +190,14 @@
     }
 
     .panel-title {
-      font-size: 11px; /* maior */
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.16em;
       color: var(--gold);
     }
 
     .panel-subtitle {
-      font-size: 11px; /* maior */
+      font-size: 11px;
       color: var(--text-muted);
     }
 
@@ -232,14 +233,14 @@
     }
 
     .pizza-box-title {
-      font-size: 11px; /* maior */
+      font-size: 11px;
       color: var(--gold-soft);
       text-transform: uppercase;
       letter-spacing: 0.12em;
     }
 
     .pizza-box-sub {
-      font-size: 10px; /* maior */
+      font-size: 10px;
       color: var(--text-muted);
     }
 
@@ -250,7 +251,6 @@
       min-height: 0;
     }
 
-    /* aumentamos um pouco mas mantivemos tudo dentro da tela */
     #funnel-pizza-svg,
     #ativos-pizza-svg,
     #emp-pizza-svg,
@@ -265,7 +265,7 @@
     #emp-legenda,
     #comissao-legenda,
     #comissao-realizada-legenda {
-      font-size:10px; /* maior */
+      font-size:10px;
       color:#9ca3af;
       display:flex;
       flex-direction:column;
@@ -677,6 +677,7 @@
           const totalAtivos = Object.values(ativosPorStatus).reduce((acc, v) => acc + v, 0) || 1;
           const entries = Object.entries(ativosPorStatus).sort((a, b) => b[1] - a[1]);
 
+          while (svg.firstChild) svg.removeChild(svgFirstChild);
           while (svg.firstChild) svg.removeChild(svg.firstChild);
           legenda.innerHTML = '';
 
