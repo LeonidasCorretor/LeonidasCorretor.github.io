@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-final-robusta" />
+  <meta name="debug" content="versao-1307-final-csv-coluna-vazia" />
   <style>
     :root {
       --bg-main: #000000;
@@ -449,11 +449,12 @@
       if (!valorStr) return 0;
       const cleaned = valorStr
         .toString()
+        .replace(/\u00A0/g, ' ')        // NBSP -> espaço normal
         .trim()
-        .replace(/[^\d,.-]/g, '')  // tira R$, espaços etc
-        .replace(/\./g, '')        // remove milhares
-        .replace(/,/g, '.');       // vírgula -> ponto
-      const num = Number.parseFloat(cleaned); // [web:683]
+        .replace(/[^\d,.-]/g, '')       // tira R$, espaços etc
+        .replace(/\./g, '')             // remove pontos de milhar
+        .replace(/,/g, '.');            // vírgula -> ponto
+      const num = Number.parseFloat(cleaned);
       return Number.isFinite(num) ? num : 0;
     }
 
@@ -488,21 +489,25 @@
           const rows = parseCSV(text);
           if (!rows || rows.length <= 1) return;
 
-          const dataRows = rows.slice(1).filter((r) =>
-            r.some((c) => c && c.trim() !== '')
-          );
+          // descarta a primeira coluna vazia de cada linha
+          const normalizedRows = rows.map((r) => r.slice(1));
 
-          // ORDEM DAS COLUNAS:
-          // A: Data do Lead
-          // B: Nome
-          // C: Telefone
-          // D: Origem
-          // E: Empreendimento
-          // F: Corretor
-          // G: Status
-          // H: Valor Previsto
-          // I: Comissões
-          // J: Comissão realizada
+          const header = normalizedRows[0];
+          const dataRows = normalizedRows
+            .slice(1)
+            .filter((r) => r.some((c) => c && c.trim() !== ''));
+
+          // Agora os índices são:
+          // 0: Data do Lead
+          // 1: Nome
+          // 2: Telefone
+          // 3: Origem
+          // 4: Empreendimento
+          // 5: Corretor
+          // 6: Status
+          // 7: Valor Previsto
+          // 8: Comissões
+          // 9: Comissão realizada
           const idxData   = 0;
           const idxNome   = 1;
           const idxOrigem = 3;
