@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-fit-13inch-fonts-bg-black-ativos-status-ok" />
+  <meta name="debug" content="versao-1307-bg-black-ativos-status-ok-vgv-fix" />
   <style>
     :root {
       --bg-main: #000000;
@@ -454,7 +453,11 @@
     }
 
     function formatValorBR(num) {
-      return 'R$ ' + num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (!Number.isFinite(num)) return 'R$ 0,00';
+      return 'R$ ' + num.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     }
 
     function parseDataBR(dataStr) {
@@ -548,7 +551,6 @@
             vendasGanhas++;
           }
 
-          // aqui garantimos que status vai para linhasAtivos.status
           if (!statusLower.includes('perdido') && !statusLower.includes('descartado')) {
             ativos++;
             if (valor >= 800000) {
@@ -559,7 +561,7 @@
               nome: cols[idxNome] || '-',
               origem: cols[idxOrigem] || '-',
               emp: cols[idxEmp] || '-',
-              status: statusRaw || '-', // <- campo certo
+              status: statusRaw || '-',
               valor,
             });
           }
@@ -577,11 +579,13 @@
           porEmpreendimento[emp] = (porEmpreendimento[emp] || 0) + 1;
         });
 
+        // Cards principais – agora defensivos
         document.getElementById('card-total-leads').textContent = totalLeads;
         document.getElementById('card-leads-novos').textContent = leadsNovos;
         document.getElementById('card-vgv').textContent = formatValorBR(vgvPotencial);
 
-        const taxaConversao = totalLeads > 0 ? ((vendasGanhas / totalLeads) * 100).toFixed(1) : 0;
+        const taxaConversaoNum = totalLeads > 0 ? (vendasGanhas / totalLeads) * 100 : 0;
+        const taxaConversao = Number.isFinite(taxaConversaoNum) ? taxaConversaoNum.toFixed(1) : '0.0';
         document.getElementById('card-conversao').textContent = taxaConversao + '%';
         document.getElementById('card-vendas-ganhas').textContent =
           vendasGanhas + (vendasGanhas === 1 ? ' venda ganha' : ' vendas ganhas');
@@ -667,14 +671,14 @@
           });
         }
 
-        // ATIVOS POR STATUS (somente não perdidos/descartados)
+        // ATIVOS POR STATUS
         const svg = document.getElementById('ativos-pizza-svg');
         const legenda = document.getElementById('ativos-legenda');
 
         if (svg && legenda) {
           const ativosPorStatus = {};
           linhasAtivos.forEach((linha) => {
-            const s = linha.status || 'Sem status';  // <- agrupa por status
+            const s = linha.status || 'Sem status';
             ativosPorStatus[s] = (ativosPorStatus[s] || 0) + 1;
           });
 
