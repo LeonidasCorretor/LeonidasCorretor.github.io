@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-bg-black-col-telefone-ajustada" />
+  <meta name="debug" content="versao-1307-bg-black-indices-100pc-corretos" />
   <style>
     :root {
       --bg-main: #000000;
@@ -362,9 +362,9 @@
           </div>
           <div style="font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:3px;">
             <p style="margin:0;">Leads ativos: <span id="info-ativos">–</span></p>
-            <p style="margin:0;">Média dos valores (coluna I): <span id="info-ticket-alto">–</span></p>
-            <p style="margin:0;">Total comissões previstas (coluna J): <span id="info-total-comissao">–</span></p>
-            <p style="margin:0;">Média dos valores (coluna J): <span id="info-media-j">–</span></p>
+            <p style="margin:0;">Média dos valores (coluna H): <span id="info-ticket-alto">–</span></p>
+            <p style="margin:0;">Total comissões previstas (coluna I): <span id="info-total-comissao">–</span></p>
+            <p style="margin:0;">Média dos valores (coluna I): <span id="info-media-j">–</span></p>
             <p style="margin:0;">Último lead em: <span id="info-ultimo-lead">–</span></p>
           </div>
         </section>
@@ -411,7 +411,7 @@
 
             <div class="pizza-box">
               <div class="pizza-box-title">Comissões previstas</div>
-              <div class="pizza-box-sub">Total x média (coluna J)</div>
+              <div class="pizza-box-sub">Total x média (coluna I)</div>
               <div class="pizza-row" id="comissao-pizza">
                 <svg id="comissao-pizza-svg" viewBox="0 0 200 200"></svg>
                 <div id="comissao-legenda"></div>
@@ -420,7 +420,7 @@
 
             <div class="pizza-box">
               <div class="pizza-box-title">Comissão realizada</div>
-              <div class="pizza-box-sub">Total das comissões (coluna K)</div>
+              <div class="pizza-box-sub">Total das comissões (coluna J)</div>
               <div class="pizza-row" id="comissao-realizada-pizza">
                 <svg id="comissao-realizada-pizza-svg" viewBox="0 0 200 200"></svg>
                 <div id="comissao-realizada-legenda"></div>
@@ -483,17 +483,17 @@
 
           const dataRows = rows.slice(1).filter((r) => r.some((c) => c && c.trim() !== ''));
 
-          // ATENÇÃO: índices ajustados com coluna Telefone entre Nome e Empreendimento
-          const idxData     = 0; // A
-          const idxNome     = 1; // B
-          const idxTelefone = 2; // C (não usamos por enquanto, mas fica mapeado)
-          const idxOrigem   = 3; // D
-          const idxEmp      = 4; // E
-          // se existir mais alguma coluna antes de Status, ajusta aqui
-          const idxStatus   = 6; // G (confere na planilha; se Status for F, muda para 5)
-          const idxValor    = 7; // H - Valor previsto (VGV)
-          const idxValorJ   = 8; // I - Comissão prevista
-          const idxValorK   = 9; // J - Comissão realizada
+          // ORDEM REAL DAS COLUNAS:
+          const idxData   = 0; // A: Data do Lead
+          const idxNome   = 1; // B: Nome
+          const idxTel    = 2; // C: Telefone (não usado nas métricas)
+          const idxOrigem = 3; // D: Origem
+          const idxEmp    = 4; // E: Empreendimento
+          const idxCorr   = 5; // F: Corretor (não usado nas métricas)
+          const idxStatus = 6; // G: Status
+          const idxValor  = 7; // H: Valor Previsto (VGV)
+          const idxValorJ = 8; // I: Comissões (previstas)
+          const idxValorK = 9; // J: Comissão realizada
 
           const hoje = new Date();
           const trintaDiasAtras = new Date(hoje);
