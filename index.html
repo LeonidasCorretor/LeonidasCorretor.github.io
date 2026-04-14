@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-final-csv-coluna-vazia-retangular" />
+  <meta name="debug" content="versao-1307-final-csv-coluna-vazia-retangular-baixo" />
   <style>
     :root {
       --bg-main: #000000;
@@ -39,17 +39,17 @@
     .wrapper {
       width: 100%;
       max-width: 960px;
-      margin: 8px auto;
-      padding: 6px 8px 8px;
+      margin: 4px auto;
+      padding: 4px 6px 6px;
       background: #020617;
       border-radius: 0;
       box-shadow:
         0 0 0 1px rgba(176, 141, 51, 0.9),
-        0 8px 20px rgba(0, 0, 0, 0.85);
+        0 6px 14px rgba(0, 0, 0, 0.85);
       display: flex;
       flex-direction: column;
-      max-height: calc(100vh - 16px);
-      overflow: hidden;
+      max-height: 540px;     /* limite de altura mais baixo */
+      overflow: hidden;      /* o conteúdo rola dentro do wrapper-inner */
     }
 
     .wrapper-inner {
@@ -58,7 +58,7 @@
       flex-direction: column;
       gap: 4px;
       min-height: 0;
-      overflow: auto;
+      overflow-y: auto;      /* scroll interno */
     }
 
     header {
@@ -116,7 +116,7 @@
     .time-info span { color: var(--gold-soft); }
 
     h2.section-title {
-      margin: 4px 0 4px;
+      margin: 2px 0 4px;
       font-size: 11px;
       letter-spacing: 0.16em;
       text-transform: uppercase;
@@ -126,59 +126,59 @@
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 6px;
+      gap: 4px;
     }
 
     .card {
       background: #020617;
       border-radius: 6px;
-      padding: 6px;
+      padding: 4px 5px;
       border: 1px solid var(--border-soft);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.9);
       position: relative;
       overflow: hidden;
     }
 
     .card-label {
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.16em;
       color: var(--text-muted);
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
 
     .card-main {
       display: flex;
       align-items: baseline;
       gap: 3px;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
 
     .card-main-value {
-      font-size: 20px;
+      font-size: 18px;   /* menor que antes */
       font-weight: 700;
       color: var(--gold-soft);
     }
 
-    .card-main-suffix { font-size: 11px; color: var(--text-muted); }
+    .card-main-suffix { font-size: 10px; color: var(--text-muted); }
 
-    .card-sub { font-size: 11px; color: var(--text-muted); }
+    .card-sub { font-size: 10px; color: var(--text-muted); }
 
     .card-sub strong { color: var(--gold); font-weight: 500; }
 
     .layout-grid-top {
       display: grid;
       grid-template-columns: 0.9fr 1.1fr;
-      gap: 6px;
+      gap: 4px;
       flex-shrink: 0;
     }
 
     .panel {
       background: var(--bg-card-alt);
       border-radius: 6px;
-      padding: 6px 7px 6px;
+      padding: 4px 5px;
       border: 1px solid var(--border-soft);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.9);
       position: relative;
       overflow: hidden;
     }
@@ -187,18 +187,18 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .panel-title {
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.16em;
       color: var(--gold);
     }
 
     .panel-subtitle {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
     }
 
@@ -206,7 +206,7 @@
       margin-top: 2px;
       display: flex;
       justify-content: space-between;
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
     }
 
@@ -222,7 +222,7 @@
     .pizza-card-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px;
+      gap: 4px;
       flex: 1;
       min-height: 0;
     }
@@ -230,25 +230,25 @@
     .pizza-box {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
     }
 
     .pizza-box-title {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--gold-soft);
       text-transform: uppercase;
       letter-spacing: 0.12em;
     }
 
     .pizza-box-sub {
-      font-size: 10px;
+      font-size: 9px;
       color: var(--text-muted);
     }
 
     .pizza-row {
       display:flex;
       align-items:center;
-      gap:8px;
+      gap:6px;
       min-height: 0;
     }
 
@@ -257,8 +257,8 @@
     #emp-pizza-svg,
     #comissao-pizza-svg,
     #comissao-realizada-pizza-svg {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;   /* antes 100x100 */
     }
 
     #funnel-legenda,
@@ -266,12 +266,12 @@
     #emp-legenda,
     #comissao-legenda,
     #comissao-realizada-legenda {
-      font-size:10px;
+      font-size:9px;
       color:#9ca3af;
       display:flex;
       flex-direction:column;
       gap:2px;
-      max-height: 100px;
+      max-height: 80px;   /* legenda mais baixa */
       overflow: hidden;
     }
 
@@ -368,7 +368,7 @@
               <div class="panel-subtitle">Temperatura da base</div>
             </div>
           </div>
-          <div style="font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:3px;">
+          <div style="font-size:10px;color:var(--text-muted);display:flex;flex-direction:column;gap:2px;">
             <p style="margin:0;">Leads ativos: <span id="info-ativos">–</span></p>
             <p style="margin:0;">Média dos valores (coluna H): <span id="info-ticket-alto">–</span></p>
             <p style="margin:0;">Total comissões previstas (coluna I): <span id="info-total-comissao">–</span></p>
@@ -505,7 +505,6 @@
             .slice(1)
             .filter((r) => r.some((c) => c && c.trim() !== ''));
 
-          // Agora os índices são:
           // 0: Data do Lead
           // 1: Nome
           // 2: Telefone
