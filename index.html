@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-bg-black-ativos-status-ok-vgv-fix" />
+  <meta name="debug" content="versao-1307-bg-black-tudo-ok" />
   <style>
     :root {
       --bg-main: #000000;
@@ -475,432 +475,436 @@
     fetch(csvUrl)
       .then((resp) => resp.text())
       .then((text) => {
-        const rows = parseCSV(text);
-        if (!rows || rows.length <= 1) {
-          return;
-        }
-
-        const dataRows = rows.slice(1).filter((r) => r.some((c) => c && c.trim() !== ''));
-
-        const idxData   = 0;
-        const idxNome   = 1;
-        const idxOrigem = 3;
-        const idxEmp    = 4;
-        const idxStatus = 6;
-        const idxValor  = 7;
-        const idxValorJ = 8;
-        const idxValorK = 9;
-
-        const hoje = new Date();
-        const trintaDiasAtras = new Date(hoje);
-        trintaDiasAtras.setDate(hoje.getDate() - 30);
-
-        let totalLeads = 0;
-        let leadsNovos = 0;
-        let vgvPotencial = 0;
-        let vendasGanhas = 0;
-        let ativos = 0;
-        let ticketAlto = 0;
-        let ultimoLeadData = null;
-
-        let somaValores = 0;
-        let qtdeValores = 0;
-        let somaValoresJ = 0;
-        let qtdeValoresJ = 0;
-        let somaValoresK = 0;
-
-        const linhasAtivos = [];
-
-        dataRows.forEach((cols) => {
-          totalLeads++;
-
-          const dataStr = cols[idxData] ? cols[idxData].trim() : '';
-          const dt = parseDataBR(dataStr);
-          if (dt) {
-            if (!ultimoLeadData || dt > ultimoLeadData) {
-              ultimoLeadData = dt;
-            }
-            if (dt >= trintaDiasAtras && dt <= hoje) {
-              leadsNovos++;
-            }
-          }
-
-          const valor = parseValorBR(cols[idxValor] || '');
-          vgvPotencial += valor;
-
-          if (valor > 0) {
-            somaValores += valor;
-            qtdeValores++;
-          }
-
-          const valorJ = parseValorBR(cols[idxValorJ] || '');
-          if (valorJ > 0) {
-            somaValoresJ += valorJ;
-            qtdeValoresJ++;
-          }
-
-          const valorK = parseValorBR(cols[idxValorK] || '');
-          if (valorK > 0) {
-            somaValoresK += valorK;
-          }
-
-          const statusRaw = cols[idxStatus] ? cols[idxStatus].trim() : '';
-          const statusLower = statusRaw.toLowerCase();
-
-          if (statusLower.includes('venda ganha') || statusLower.includes('assinado') || statusLower.includes('aprovado')) {
-            vendasGanhas++;
-          }
-
-          if (!statusLower.includes('perdido') && !statusLower.includes('descartado')) {
-            ativos++;
-            if (valor >= 800000) {
-              ticketAlto++;
-            }
-            linhasAtivos.push({
-              data: dt ? formatDataBR(dt) : dataStr || '-',
-              nome: cols[idxNome] || '-',
-              origem: cols[idxOrigem] || '-',
-              emp: cols[idxEmp] || '-',
-              status: statusRaw || '-',
-              valor,
-            });
-          }
-        });
-
-        const porStatusLimpo = {};
-        linhasAtivos.forEach((linha) => {
-          const s = linha.status || 'Sem status';
-          porStatusLimpo[s] = (porStatusLimpo[s] || 0) + 1;
-        });
-
-        const porEmpreendimento = {};
-        dataRows.forEach((cols) => {
-          const emp = (cols[idxEmp] || 'Sem empreendimento').trim();
-          porEmpreendimento[emp] = (porEmpreendimento[emp] || 0) + 1;
-        });
-
-        // Cards principais – agora defensivos
-        document.getElementById('card-total-leads').textContent = totalLeads;
-        document.getElementById('card-leads-novos').textContent = leadsNovos;
-        document.getElementById('card-vgv').textContent = formatValorBR(vgvPotencial);
-
-        const taxaConversaoNum = totalLeads > 0 ? (vendasGanhas / totalLeads) * 100 : 0;
-        const taxaConversao = Number.isFinite(taxaConversaoNum) ? taxaConversaoNum.toFixed(1) : '0.0';
-        document.getElementById('card-conversao').textContent = taxaConversao + '%';
-        document.getElementById('card-vendas-ganhas').textContent =
-          vendasGanhas + (vendasGanhas === 1 ? ' venda ganha' : ' vendas ganhas');
-
-        document.getElementById('info-ativos').textContent = ativos;
-
-        const mediaValores = qtdeValores > 0 ? somaValores / qtdeValores : 0;
-        document.getElementById('info-ticket-alto').textContent = formatValorBR(mediaValores);
-
-        const mediaValoresJ = qtdeValoresJ > 0 ? somaValoresJ / qtdeValoresJ : 0;
-        document.getElementById('info-media-j').textContent = formatValorBR(mediaValoresJ);
-        document.getElementById('info-total-comissao').textContent = formatValorBR(somaValoresJ);
-
-        document.getElementById('info-total-linhas').textContent = ativos + ' leads';
-
-        const infoData = document.getElementById('info-data');
-        if (infoData) {
-          infoData.textContent = formatDataBR(new Date());
-        }
-        const infoUltimoLead = document.getElementById('info-ultimo-lead');
-        if (infoUltimoLead) {
-          infoUltimoLead.textContent = ultimoLeadData ? formatDataBR(ultimoLeadData) : '-';
-        }
-
-        // FUNIL POR STATUS (todos)
-        const svgFunnel = document.getElementById('funnel-pizza-svg');
-        const legendaFunnel = document.getElementById('funnel-legenda');
-        if (svgFunnel && legendaFunnel) {
-          while (svgFunnel.firstChild) svgFunnel.removeChild(svgFunnel.firstChild);
-          legendaFunnel.innerHTML = '';
-
-          const totalPorStatusFunnel = Object.values(porStatusLimpo).reduce((acc, v) => acc + v, 0) || 1;
-          const entriesFunnel = Object.entries(porStatusLimpo).sort((a, b) => b[1] - a[1]);
-
-          const cx = 100;
-          const cy = 100;
-          const r = 80;
-          let anguloAcumuladoFunnel = -Math.PI / 2;
-
-          const coresFunnel = [
-            '#8a6a24',
-            '#9b7a2c',
-            '#b08d33',
-            '#c19a3a',
-            '#d1ad4a',
-            '#e0c060',
-            '#f0d47a'
-          ];
-
-          entriesFunnel.forEach(([statusLabel, qtd], idx) => {
-            const frac = qtd / totalPorStatusFunnel;
-            const angulo = frac * 2 * Math.PI;
-            const anguloFinal = anguloAcumuladoFunnel + angulo;
-
-            const x1 = cx + r * Math.cos(anguloAcumuladoFunnel);
-            const y1 = cy + r * Math.sin(anguloAcumuladoFunnel);
-            const x2 = cx + r * Math.cos(anguloFinal);
-            const y2 = cy + r * Math.sin(anguloFinal);
-
-            const grandeArco = angulo > Math.PI ? 1 : 0;
-
-            const pathData = [
-              `M ${cx} ${cy}`,
-              `L ${x1} ${y1}`,
-              `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
-              'Z',
-            ].join(' ');
-
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', pathData);
-            path.setAttribute('fill', coresFunnel[idx % coresFunnel.length]);
-            svgFunnel.appendChild(path);
-
-            const perc = Math.round(frac * 100);
-            const item = document.createElement('div');
-            const cor = coresFunnel[idx % coresFunnel.length];
-            item.innerHTML =
-              `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:${cor};margin-right:4px;"></span>` +
-              `${statusLabel} — ${qtd} (${perc}%)`;
-            legendaFunnel.appendChild(item);
-
-            anguloAcumuladoFunnel = anguloFinal;
-          });
-        }
-
-        // ATIVOS POR STATUS
-        const svg = document.getElementById('ativos-pizza-svg');
-        const legenda = document.getElementById('ativos-legenda');
-
-        if (svg && legenda) {
-          const ativosPorStatus = {};
-          linhasAtivos.forEach((linha) => {
-            const s = linha.status || 'Sem status';
-            ativosPorStatus[s] = (ativosPorStatus[s] || 0) + 1;
-          });
-
-          const totalAtivos = Object.values(ativosPorStatus).reduce((acc, v) => acc + v, 0);
-          while (svg.firstChild) svg.removeChild(svg.firstChild);
-          legenda.innerHTML = '';
-          if (!totalAtivos) {
+        try {
+          const rows = parseCSV(text);
+          if (!rows || rows.length <= 1) {
             return;
           }
 
-          const entries = Object.entries(ativosPorStatus).sort((a, b) => b[1] - a[1]);
+          const dataRows = rows.slice(1).filter((r) => r.some((c) => c && c.trim() !== ''));
 
-          const cx = 100;
-          const cy = 100;
-          const r = 80;
-          let anguloAcumulado = -Math.PI / 2;
+          const idxData   = 0;
+          const idxNome   = 1;
+          const idxOrigem = 3;
+          const idxEmp    = 4;
+          const idxStatus = 6;
+          const idxValor  = 7;
+          const idxValorJ = 8;
+          const idxValorK = 9;
 
-          const cores = [
-            '#8a6a24',
-            '#9b7a2c',
-            '#b08d33',
-            '#c19a3a',
-            '#d1ad4a',
-            '#e0c060',
-            '#f0d47a'
-          ];
+          const hoje = new Date();
+          const trintaDiasAtras = new Date(hoje);
+          trintaDiasAtras.setDate(hoje.getDate() - 30);
 
-          entries.forEach(([statusLabel, qtd], idx) => {
-            const frac = qtd / totalAtivos;
-            const angulo = frac * 2 * Math.PI;
-            const anguloFinal = anguloAcumulado + angulo;
+          let totalLeads = 0;
+          let leadsNovos = 0;
+          let vgvPotencial = 0;
+          let vendasGanhas = 0;
+          let ativos = 0;
+          let ticketAlto = 0;
+          let ultimoLeadData = null;
 
-            const x1 = cx + r * Math.cos(anguloAcumulado);
-            const y1 = cy + r * Math.sin(anguloAcumulado);
-            const x2 = cx + r * Math.cos(anguloFinal);
-            const y2 = cy + r * Math.sin(anguloFinal);
+          let somaValores = 0;
+          let qtdeValores = 0;
+          let somaValoresJ = 0;
+          let qtdeValoresJ = 0;
+          let somaValoresK = 0;
 
-            const grandeArco = angulo > Math.PI ? 1 : 0;
+          const linhasAtivos = [];
 
-            const pathData = [
-              `M ${cx} ${cy}`,
-              `L ${x1} ${y1}`,
-              `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
-              'Z',
-            ].join(' ');
+          dataRows.forEach((cols) => {
+            totalLeads++;
 
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', pathData);
-            path.setAttribute('fill', cores[idx % cores.length]);
-            svg.appendChild(path);
+            const dataStr = cols[idxData] ? cols[idxData].trim() : '';
+            const dt = parseDataBR(dataStr);
+            if (dt) {
+              if (!ultimoLeadData || dt > ultimoLeadData) {
+                ultimoLeadData = dt;
+              }
+              if (dt >= trintaDiasAtras && dt <= hoje) {
+                leadsNovos++;
+              }
+            }
 
-            const item = document.createElement('div');
-            const cor = cores[idx % cores.length];
-            const perc = Math.round(frac * 100);
-            item.innerHTML =
-              `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:${cor};margin-right:4px;"></span>` +
-              `${statusLabel} — ${qtd} (${perc}%)`;
-            legenda.appendChild(item);
+            const valor = parseValorBR(cols[idxValor] || '');
+            vgvPotencial += valor;
 
-            anguloAcumulado = anguloFinal;
+            if (valor > 0) {
+              somaValores += valor;
+              qtdeValores++;
+            }
+
+            const valorJ = parseValorBR(cols[idxValorJ] || '');
+            if (valorJ > 0) {
+              somaValoresJ += valorJ;
+              qtdeValoresJ++;
+            }
+
+            const valorK = parseValorBR(cols[idxValorK] || '');
+            if (valorK > 0) {
+              somaValoresK += valorK;
+            }
+
+            const statusRaw = cols[idxStatus] ? cols[idxStatus].trim() : '';
+            const statusLower = statusRaw.toLowerCase();
+
+            if (statusLower.includes('venda ganha') || statusLower.includes('assinado') || statusLower.includes('aprovado')) {
+              vendasGanhas++;
+            }
+
+            if (!statusLower.includes('perdido') && !statusLower.includes('descartado')) {
+              ativos++;
+              if (valor >= 800000) {
+                ticketAlto++;
+              }
+              linhasAtivos.push({
+                data: dt ? formatDataBR(dt) : dataStr || '-',
+                nome: cols[idxNome] || '-',
+                origem: cols[idxOrigem] || '-',
+                emp: cols[idxEmp] || '-',
+                status: statusRaw || '-',
+                valor,
+              });
+            }
           });
-        }
 
-        // EMPREENDIMENTOS
-        const svgEmp = document.getElementById('emp-pizza-svg');
-        const legendaEmp = document.getElementById('emp-legenda');
-
-        if (svgEmp && legendaEmp) {
-          const totalEmp = Object.values(porEmpreendimento).reduce((acc, v) => acc + v, 0) || 1;
-          const entriesEmp = Object.entries(porEmpreendimento).sort((a, b) => b[1] - a[1]);
-
-          while (svgEmp.firstChild) svgEmp.removeChild(svgEmp.firstChild);
-          legendaEmp.innerHTML = '';
-
-          const cx = 100;
-          const cy = 100;
-          const r = 80;
-          let anguloAcumuladoEmp = -Math.PI / 2;
-
-          const coresEmp = [
-            '#8a6a24',
-            '#9b7a2c',
-            '#b08d33',
-            '#c19a3a',
-            '#d1ad4a',
-            '#e0c060',
-            '#f0d47a'
-          ];
-
-          entriesEmp.forEach(([empLabel, qtd], idx) => {
-            const frac = qtd / totalEmp;
-            const angulo = frac * 2 * Math.PI;
-            const anguloFinal = anguloAcumuladoEmp + angulo;
-
-            const x1 = cx + r * Math.cos(anguloAcumuladoEmp);
-            const y1 = cy + r * Math.sin(anguloAcumuladoEmp);
-            const x2 = cx + r * Math.cos(anguloFinal);
-            const y2 = cy + r * Math.sin(anguloFinal);
-
-            const grandeArco = angulo > Math.PI ? 1 : 0;
-
-            const pathData = [
-              `M ${cx} ${cy}`,
-              `L ${x1} ${y1}`,
-              `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
-              'Z',
-            ].join(' ');
-
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', pathData);
-            path.setAttribute('fill', coresEmp[idx % coresEmp.length]);
-            svgEmp.appendChild(path);
-
-            const item = document.createElement('div');
-            const cor = coresEmp[idx % coresEmp.length];
-            const perc = Math.round(frac * 100);
-            item.innerHTML =
-              `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:${cor};margin-right:4px;"></span>` +
-              `${empLabel} — ${qtd} (${perc}%)`;
-            legendaEmp.appendChild(item);
-
-            anguloAcumuladoEmp = anguloFinal;
+          const porStatusLimpo = {};
+          linhasAtivos.forEach((linha) => {
+            const s = linha.status || 'Sem status';
+            porStatusLimpo[s] = (porStatusLimpo[s] || 0) + 1;
           });
-        }
 
-        // COMISSÕES PREVISTAS
-        const svgCom = document.getElementById('comissao-pizza-svg');
-        const legendaCom = document.getElementById('comissao-legenda');
+          const porEmpreendimento = {};
+          dataRows.forEach((cols) => {
+            const emp = (cols[idxEmp] || 'Sem empreendimento').trim();
+            porEmpreendimento[emp] = (porEmpreendimento[emp] || 0) + 1;
+          });
 
-        if (svgCom && legendaCom) {
-          while (svgCom.firstChild) svgCom.removeChild(svgCom.firstChild);
-          legendaCom.innerHTML = '';
+          // Cards principais
+          document.getElementById('card-total-leads').textContent = totalLeads;
+          document.getElementById('card-leads-novos').textContent = leadsNovos;
+          document.getElementById('card-vgv').textContent = formatValorBR(vgvPotencial);
 
-          const cx = 100;
-          const cy = 100;
-          const r = 80;
+          const taxaConversaoNum = totalLeads > 0 ? (vendasGanhas / totalLeads) * 100 : 0;
+          const taxaConversao = Number.isFinite(taxaConversaoNum) ? taxaConversaoNum.toFixed(1) : '0.0';
+          document.getElementById('card-conversao').textContent = taxaConversao + '%';
+          document.getElementById('card-vendas-ganhas').textContent =
+            vendasGanhas + (vendasGanhas === 1 ? ' venda ganha' : ' vendas ganhas');
 
-          const totalCom = somaValoresJ;
-          const mediaCom = mediaValoresJ;
+          document.getElementById('info-ativos').textContent = ativos;
 
-          const totalBase = (totalCom || 0) + (mediaCom || 0) || 1;
+          const mediaValores = qtdeValores > 0 ? somaValores / qtdeValores : 0;
+          document.getElementById('info-ticket-alto').textContent = formatValorBR(mediaValores);
 
-          const valores = [
-            { label: 'Total comissões previstas', valor: totalCom },
-            { label: 'Média das comissões', valor: mediaCom }
-          ];
+          const mediaValoresJ = qtdeValoresJ > 0 ? somaValoresJ / qtdeValoresJ : 0;
+          document.getElementById('info-media-j').textContent = formatValorBR(mediaValoresJ);
+          document.getElementById('info-total-comissao').textContent = formatValorBR(somaValoresJ);
 
-          const coresCom = ['#b08d33', '#4b5563'];
+          document.getElementById('info-total-linhas').textContent = ativos + ' leads';
 
-          let anguloAcumuladoCom = -Math.PI / 2;
+          const infoData = document.getElementById('info-data');
+          if (infoData) {
+            infoData.textContent = formatDataBR(new Date());
+          }
+          const infoUltimoLead = document.getElementById('info-ultimo-lead');
+          if (infoUltimoLead) {
+            infoUltimoLead.textContent = ultimoLeadData ? formatDataBR(ultimoLeadData) : '-';
+          }
 
-          valores.forEach((item, idx) => {
-            const frac = item.valor / totalBase;
-            const angulo = frac * 2 * Math.PI;
-            const anguloFinal = anguloAcumuladoCom + angulo;
+          // FUNIL POR STATUS (todos)
+          const svgFunnel = document.getElementById('funnel-pizza-svg');
+          const legendaFunnel = document.getElementById('funnel-legenda');
+          if (svgFunnel && legendaFunnel) {
+            while (svgFunnel.firstChild) svgFunnel.removeChild(svgFunnel.firstChild);
+            legendaFunnel.innerHTML = '';
 
-            const x1 = cx + r * Math.cos(anguloAcumuladoCom);
-            const y1 = cy + r * Math.sin(anguloAcumuladoCom);
-            const x2 = cx + r * Math.cos(anguloFinal);
-            const y2 = cy + r * Math.sin(anguloFinal);
+            const totalPorStatusFunnel = Object.values(porStatusLimpo).reduce((acc, v) => acc + v, 0) || 1;
+            const entriesFunnel = Object.entries(porStatusLimpo).sort((a, b) => b[1] - a[1]);
 
-            const grandeArco = angulo > Math.PI ? 1 : 0;
+            const cx = 100;
+            const cy = 100;
+            const r = 80;
+            let anguloAcumuladoFunnel = -Math.PI / 2;
+
+            const coresFunnel = [
+              '#8a6a24',
+              '#9b7a2c',
+              '#b08d33',
+              '#c19a3a',
+              '#d1ad4a',
+              '#e0c060',
+              '#f0d47a'
+            ];
+
+            entriesFunnel.forEach(([statusLabel, qtd], idx) => {
+              const frac = qtd / totalPorStatusFunnel;
+              const angulo = frac * 2 * Math.PI;
+              const anguloFinal = anguloAcumuladoFunnel + angulo;
+
+              const x1 = cx + r * Math.cos(anguloAcumuladoFunnel);
+              const y1 = cy + r * Math.sin(anguloAcumuladoFunnel);
+              const x2 = cx + r * Math.cos(anguloFinal);
+              const y2 = cy + r * Math.sin(anguloFinal);
+
+              const grandeArco = angulo > Math.PI ? 1 : 0;
+
+              const pathData = [
+                `M ${cx} ${cy}`,
+                `L ${x1} ${y1}`,
+                `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
+                'Z',
+              ].join(' ');
+
+              const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              path.setAttribute('d', pathData);
+              path.setAttribute('fill', coresFunnel[idx % coresFunnel.length]);
+              svgFunnel.appendChild(path);
+
+              const perc = Math.round(frac * 100);
+              const item = document.createElement('div');
+              const cor = coresFunnel[idx % coresFunnel.length];
+              item.innerHTML =
+                `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:${cor};margin-right:4px;"></span>` +
+                `${statusLabel} — ${qtd} (${perc}%)`;
+              legendaFunnel.appendChild(item);
+
+              anguloAcumuladoFunnel = anguloFinal;
+            });
+          }
+
+          // ATIVOS POR STATUS
+          const svg = document.getElementById('ativos-pizza-svg');
+          const legenda = document.getElementById('ativos-legenda');
+
+          if (svg && legenda) {
+            const ativosPorStatus = {};
+            linhasAtivos.forEach((linha) => {
+              const s = linha.status || 'Sem status';
+              ativosPorStatus[s] = (ativosPorStatus[s] || 0) + 1;
+            });
+
+            const totalAtivos = Object.values(ativosPorStatus).reduce((acc, v) => acc + v, 0);
+            while (svg.firstChild) svg.removeChild(svg.firstChild);
+            legenda.innerHTML = '';
+            if (!totalAtivos) {
+              return;
+            }
+
+            const entries = Object.entries(ativosPorStatus).sort((a, b) => b[1] - a[1]);
+
+            const cx = 100;
+            const cy = 100;
+            const r = 80;
+            let anguloAcumulado = -Math.PI / 2;
+
+            const cores = [
+              '#8a6a24',
+              '#9b7a2c',
+              '#b08d33',
+              '#c19a3a',
+              '#d1ad4a',
+              '#e0c060',
+              '#f0d47a'
+            ];
+
+            entries.forEach(([statusLabel, qtd], idx) => {
+              const frac = qtd / totalAtivos;
+              const angulo = frac * 2 * Math.PI;
+              const anguloFinal = anguloAcumulado + angulo;
+
+              const x1 = cx + r * Math.cos(anguloAcumulado);
+              const y1 = cy + r * Math.sin(anguloAcumulado);
+              const x2 = cx + r * Math.cos(anguloFinal);
+              const y2 = cy + r * Math.sin(anguloFinal);
+
+              const grandeArco = angulo > Math.PI ? 1 : 0;
+
+              const pathData = [
+                `M ${cx} ${cy}`,
+                `L ${x1} ${y1}`,
+                `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
+                'Z',
+              ].join(' ');
+
+              const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              path.setAttribute('d', pathData);
+              path.setAttribute('fill', cores[idx % cores.length]);
+              svg.appendChild(path);
+
+              const item = document.createElement('div');
+              const cor = cores[idx % cores.length];
+              const perc = Math.round(frac * 100);
+              item.innerHTML =
+                `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:${cor};margin-right:4px;"></span>` +
+                `${statusLabel} — ${qtd} (${perc}%)`;
+              legenda.appendChild(item);
+
+              anguloAcumulado = anguloFinal;
+            });
+          }
+
+          // EMPREENDIMENTOS
+          const svgEmp = document.getElementById('emp-pizza-svg');
+          const legendaEmp = document.getElementById('emp-legenda');
+
+          if (svgEmp && legendaEmp) {
+            const totalEmp = Object.values(porEmpreendimento).reduce((acc, v) => acc + v, 0) || 1;
+            const entriesEmp = Object.entries(porEmpreendimento).sort((a, b) => b[1] - a[1]);
+
+            while (svgEmp.firstChild) svgEmp.removeChild(svgEmp.firstChild);
+            legendaEmp.innerHTML = '';
+
+            const cx = 100;
+            const cy = 100;
+            const r = 80;
+            let anguloAcumuladoEmp = -Math.PI / 2;
+
+            const coresEmp = [
+              '#8a6a24',
+              '#9b7a2c',
+              '#b08d33',
+              '#c19a3a',
+              '#d1ad4a',
+              '#e0c060',
+              '#f0d47a'
+            ];
+
+            entriesEmp.forEach(([empLabel, qtd], idx) => {
+              const frac = qtd / totalEmp;
+              const angulo = frac * 2 * Math.PI;
+              const anguloFinal = anguloAcumuladoEmp + angulo;
+
+              const x1 = cx + r * Math.cos(anguloAcumuladoEmp);
+              const y1 = cy + r * Math.sin(anguloAcumuladoEmp);
+              const x2 = cx + r * Math.cos(anguloFinal);
+              const y2 = cy + r * Math.sin(anguloFinal);
+
+              const grandeArco = angulo > Math.PI ? 1 : 0;
+
+              const pathData = [
+                `M ${cx} ${cy}`,
+                `L ${x1} ${y1}`,
+                `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
+                'Z',
+              ].join(' ');
+
+              const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              path.setAttribute('d', pathData);
+              path.setAttribute('fill', coresEmp[idx % coresEmp.length]);
+              svgEmp.appendChild(path);
+
+              const item = document.createElement('div');
+              const cor = coresEmp[idx % coresEmp.length];
+              const perc = Math.round(frac * 100);
+              item.innerHTML =
+                `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:${cor};margin-right:4px;"></span>` +
+                `${empLabel} — ${qtd} (${perc}%)`;
+              legendaEmp.appendChild(item);
+
+              anguloAcumuladoEmp = anguloFinal;
+            });
+          }
+
+          // COMISSÕES PREVISTAS
+          const svgCom = document.getElementById('comissao-pizza-svg');
+          const legendaCom = document.getElementById('comissao-legenda');
+
+          if (svgCom && legendaCom) {
+            while (svgCom.firstChild) svgCom.removeChild(svgCom.firstChild);
+            legendaCom.innerHTML = '';
+
+            const cx = 100;
+            const cy = 100;
+            const r = 80;
+
+            const totalCom = somaValoresJ;
+            const mediaCom = mediaValoresJ;
+
+            const totalBase = (totalCom || 0) + (mediaCom || 0) || 1;
+
+            const valores = [
+              { label: 'Total comissões previstas', valor: totalCom },
+              { label: 'Média das comissões', valor: mediaCom }
+            ];
+
+            const coresCom = ['#b08d33', '#4b5563'];
+
+            let anguloAcumuladoCom = -Math.PI / 2;
+
+            valores.forEach((item, idx) => {
+              const frac = item.valor / totalBase;
+              const angulo = frac * 2 * Math.PI;
+              const anguloFinal = anguloAcumuladoCom + angulo;
+
+              const x1 = cx + r * Math.cos(anguloAcumuladoCom);
+              const y1 = cy + r * Math.sin(anguloAcumuladoCom);
+              const x2 = cx + r * Math.cos(anguloFinal);
+              const y2 = cy + r * Math.sin(anguloFinal);
+
+              const grandeArco = angulo > Math.PI ? 1 : 0;
+
+              const pathData = [
+                `M ${cx} ${cy}`,
+                `L ${x1} ${y1}`,
+                `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
+                'Z',
+              ].join(' ');
+
+              const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              path.setAttribute('d', pathData);
+              path.setAttribute('fill', coresCom[idx % coresCom.length]);
+              svgCom.appendChild(path);
+
+              const perc = Math.round(frac * 100);
+              const legendaItem = document.createElement('div');
+              legendaItem.innerHTML =
+                `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:${coresCom[idx % coresCom.length]};margin-right:4px;"></span>` +
+                `${item.label} — ${formatValorBR(item.valor)} (${perc}%)`;
+              legendaCom.appendChild(legendaItem);
+
+              anguloAcumuladoCom = anguloFinal;
+            });
+          }
+
+          // COMISSÃO REALIZADA
+          const svgComReal = document.getElementById('comissao-realizada-pizza-svg');
+          const legendaComReal = document.getElementById('comissao-realizada-legenda');
+
+          if (svgComReal && legendaComReal) {
+            while (svgComReal.firstChild) svgComReal.removeChild(svgComReal.firstChild);
+            legendaComReal.innerHTML = '';
+
+            const cx = 100;
+            const cy = 100;
+            const r = 80;
+
+            const totalReal = somaValoresK || 0;
+
+            const x1 = cx + r * Math.cos(-Math.PI / 2);
+            const y1 = cy + r * Math.sin(-Math.PI / 2);
+            const x2 = cx + r * Math.cos(3 * Math.PI / 2);
+            const y2 = cy + r * Math.sin(3 * Math.PI / 2);
 
             const pathData = [
               `M ${cx} ${cy}`,
               `L ${x1} ${y1}`,
-              `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
+              `A ${r} ${r} 0 1 1 ${x2} ${y2}`,
               'Z',
             ].join(' ');
 
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('d', pathData);
-            path.setAttribute('fill', coresCom[idx % coresCom.length]);
-            svgCom.appendChild(path);
+            path.setAttribute('fill', '#16a34a');
+            svgComReal.appendChild(path);
 
-            const perc = Math.round(frac * 100);
             const legendaItem = document.createElement('div');
             legendaItem.innerHTML =
-              `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:${coresCom[idx % coresCom.length]};margin-right:4px;"></span>` +
-              `${item.label} — ${formatValorBR(item.valor)} (${perc}%)`;
-            legendaCom.appendChild(legendaItem);
-
-            anguloAcumuladoCom = anguloFinal;
-          });
-        }
-
-        // COMISSÃO REALIZADA
-        const svgComReal = document.getElementById('comissao-realizada-pizza-svg');
-        const legendaComReal = document.getElementById('comissao-realizada-legenda');
-
-        if (svgComReal && legendaComReal) {
-          while (svgComReal.firstChild) svgComReal.removeChild(svgComReal.firstChild);
-          legendaComReal.innerHTML = '';
-
-          const cx = 100;
-          const cy = 100;
-          const r = 80;
-
-          const totalReal = somaValoresK || 0;
-
-          const x1 = cx + r * Math.cos(-Math.PI / 2);
-          const y1 = cy + r * Math.sin(-Math.PI / 2);
-          const x2 = cx + r * Math.cos(3 * Math.PI / 2);
-          const y2 = cy + r * Math.sin(3 * Math.PI / 2);
-
-          const pathData = [
-            `M ${cx} ${cy}`,
-            `L ${x1} ${y1}`,
-            `A ${r} ${r} 0 1 1 ${x2} ${y2}`,
-            'Z',
-          ].join(' ');
-
-          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          path.setAttribute('d', pathData);
-          path.setAttribute('fill', '#16a34a');
-          svgComReal.appendChild(path);
-
-          const legendaItem = document.createElement('div');
-          legendaItem.innerHTML =
-            `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:#16a34a;margin-right:4px;"></span>` +
-            `Total comissão realizada — ${formatValorBR(totalReal)} (100%)`;
-          legendaComReal.appendChild(legendaItem);
+              `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:#16a34a;margin-right:4px;"></span>` +
+              `Total comissão realizada — ${formatValorBR(totalReal)} (100%)`;
+            legendaComReal.appendChild(legendaItem);
+          }
+        } catch (e) {
+          console.error('Erro ao processar dashboard', e);
         }
       })
       .catch((err) => {
