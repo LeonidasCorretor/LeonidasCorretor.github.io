@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-bg-black-parser-fixo" />
+  <meta name="debug" content="versao-1307-final-robusta" />
   <style>
     :root {
       --bg-main: #000000;
@@ -438,7 +438,7 @@
       'https://docs.google.com/spreadsheets/d/e/2PACX-1vTyYxWwXeRZyTue9GuIZaAAEFxWC-1gKPnNev-P5odNDn7QPCWahW-l0JFWGmt8j64qdb2RrHNDQPoM/pub?gid=0&single=true&output=csv';
 
     function parseCSV(text) {
-      const lines = text.split('\n').map((l) => l.trim()).filter((l) => l);
+      const lines = text.split(/\r?\n/).filter((l) => l.trim() !== '');
       if (!lines.length) return [];
       const firstLine = lines[0];
       const sep = firstLine.indexOf(';') !== -1 ? ';' : ',';
@@ -447,17 +447,18 @@
 
     function parseValorBR(valorStr) {
       if (!valorStr) return 0;
-      // Ex.: "R$ 352.000,00" → "352000.00"
       const cleaned = valorStr
-        .replace(/[^\d,.-]/g, '')       // tira R$, espaços etc.
-        .replace(/\./g, '')            // remove todos os pontos (separador de milhar)
-        .replace(/,/g, '.');           // vírgula decimal → ponto
-      const num = parseFloat(cleaned);
-      return isNaN(num) ? 0 : num;
+        .toString()
+        .trim()
+        .replace(/[^\d,.-]/g, '')  // tira R$, espaços etc
+        .replace(/\./g, '')        // remove milhares
+        .replace(/,/g, '.');       // vírgula -> ponto
+      const num = Number.parseFloat(cleaned); // [web:683]
+      return Number.isFinite(num) ? num : 0;
     }
 
     function formatValorBR(num) {
-      if (!Number.isFinite(num)) return 'R$ 0,00';
+      if (!Number.isFinite(num) || num === 0) return 'R$ 0,00';
       return 'R$ ' + num.toLocaleString('pt-BR', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
@@ -468,7 +469,11 @@
       if (!dataStr) return null;
       const partes = dataStr.split('/');
       if (partes.length !== 3) return null;
-      const d = new Date(parseInt(partes[2], 10), parseInt(partes[1], 10) - 1, parseInt(partes[0], 10));
+      const d = new Date(
+        parseInt(partes[2], 10),
+        parseInt(partes[1], 10) - 1,
+        parseInt(partes[0], 10)
+      );
       return isNaN(d.getTime()) ? null : d;
     }
 
@@ -481,23 +486,31 @@
       .then((text) => {
         try {
           const rows = parseCSV(text);
-          if (!rows || rows.length <= 1) {
-            return;
-          }
+          if (!rows || rows.length <= 1) return;
 
-          const dataRows = rows.slice(1).filter((r) => r.some((c) => c && c.trim() !== ''));
+          const dataRows = rows.slice(1).filter((r) =>
+            r.some((c) => c && c.trim() !== '')
+          );
 
-          // ORDEM REAL DAS COLUNAS:
-          const idxData   = 0; // A: Data do Lead
-          const idxNome   = 1; // B: Nome
-          const idxTel    = 2; // C: Telefone
-          const idxOrigem = 3; // D: Origem
-          const idxEmp    = 4; // E: Empreendimento
-          const idxCorr   = 5; // F: Corretor
-          const idxStatus = 6; // G: Status
-          const idxValor  = 7; // H: Valor Previsto (VGV)
-          const idxValorJ = 8; // I: Comissões (previstas)
-          const idxValorK = 9; // J: Comissão realizada
+          // ORDEM DAS COLUNAS:
+          // A: Data do Lead
+          // B: Nome
+          // C: Telefone
+          // D: Origem
+          // E: Empreendimento
+          // F: Corretor
+          // G: Status
+          // H: Valor Previsto
+          // I: Comissões
+          // J: Comissão realizada
+          const idxData   = 0;
+          const idxNome   = 1;
+          const idxOrigem = 3;
+          const idxEmp    = 4;
+          const idxStatus = 6;
+          const idxValor  = 7;
+          const idxValorJ = 8;
+          const idxValorK = 9;
 
           const hoje = new Date();
           const trintaDiasAtras = new Date(hoje);
@@ -508,7 +521,6 @@
           let vgvPotencial = 0;
           let vendasGanhas = 0;
           let ativos = 0;
-          let ticketAlto = 0;
           let ultimoLeadData = null;
 
           let somaValores = 0;
@@ -522,15 +534,11 @@
           dataRows.forEach((cols) => {
             totalLeads++;
 
-            const dataStr = cols[idxData] ? cols[idxData].trim() : '';
+            const dataStr = (cols[idxData] || '').trim();
             const dt = parseDataBR(dataStr);
             if (dt) {
-              if (!ultimoLeadData || dt > ultimoLeadData) {
-                ultimoLeadData = dt;
-              }
-              if (dt >= trintaDiasAtras && dt <= hoje) {
-                leadsNovos++;
-              }
+              if (!ultimoLeadData || dt > ultimoLeadData) ultimoLeadData = dt;
+              if (dt >= trintaDiasAtras && dt <= hoje) leadsNovos++;
             }
 
             const valor = parseValorBR(cols[idxValor] || '');
@@ -552,18 +560,23 @@
               somaValoresK += valorK;
             }
 
-            const statusRaw = cols[idxStatus] ? cols[idxStatus].trim() : '';
+            const statusRaw = (cols[idxStatus] || '').trim();
             const statusLower = statusRaw.toLowerCase();
 
-            if (statusLower.includes('venda ganha') || statusLower.includes('assinado') || statusLower.includes('aprovado')) {
+            if (
+              statusLower.includes('venda ganha') ||
+              statusLower.includes('assinado') ||
+              statusLower.includes('aprovado')
+            ) {
               vendasGanhas++;
             }
 
-            if (!statusLower.includes('perdido') && !statusLower.includes('descartado')) {
+            if (
+              statusLower &&
+              !statusLower.includes('perdido') &&
+              !statusLower.includes('descartado')
+            ) {
               ativos++;
-              if (valor >= 800000) {
-                ticketAlto++;
-              }
               linhasAtivos.push({
                 data: dt ? formatDataBR(dt) : dataStr || '-',
                 nome: cols[idxNome] || '-',
@@ -592,30 +605,42 @@
           document.getElementById('card-leads-novos').textContent = leadsNovos;
           document.getElementById('card-vgv').textContent = formatValorBR(vgvPotencial);
 
-          const taxaConversaoNum = totalLeads > 0 ? (vendasGanhas / totalLeads) * 100 : 0;
-          const taxaConversao = Number.isFinite(taxaConversaoNum) ? taxaConversaoNum.toFixed(1) : '0.0';
-          document.getElementById('card-conversao').textContent = taxaConversao + '%';
+          const taxaConversaoNum =
+            totalLeads > 0 ? (vendasGanhas / totalLeads) * 100 : 0;
+          const taxaConversao = Number.isFinite(taxaConversaoNum)
+            ? taxaConversaoNum.toFixed(1)
+            : '0.0';
+          document.getElementById('card-conversao').textContent =
+            taxaConversao + '%';
           document.getElementById('card-vendas-ganhas').textContent =
-            vendasGanhas + (vendasGanhas === 1 ? ' venda ganha' : ' vendas ganhas');
+            vendasGanhas +
+            (vendasGanhas === 1 ? ' venda ganha' : ' vendas ganhas');
 
           document.getElementById('info-ativos').textContent = ativos;
 
-          const mediaValores = qtdeValores > 0 ? somaValores / qtdeValores : 0;
-          document.getElementById('info-ticket-alto').textContent = formatValorBR(mediaValores);
+          const mediaValores =
+            qtdeValores > 0 ? somaValores / qtdeValores : 0;
+          document.getElementById('info-ticket-alto').textContent =
+            formatValorBR(mediaValores);
 
-          const mediaValoresJ = qtdeValoresJ > 0 ? somaValoresJ / qtdeValoresJ : 0;
-          document.getElementById('info-media-j').textContent = formatValorBR(mediaValoresJ);
-          document.getElementById('info-total-comissao').textContent = formatValorBR(somaValoresJ);
+          const mediaValoresJ =
+            qtdeValoresJ > 0 ? somaValoresJ / qtdeValoresJ : 0;
+          document.getElementById('info-media-j').textContent =
+            formatValorBR(mediaValoresJ);
+          document.getElementById('info-total-comissao').textContent =
+            formatValorBR(somaValoresJ);
 
-          document.getElementById('info-total-linhas').textContent = ativos + ' leads';
+          document.getElementById('info-total-linhas').textContent =
+            ativos + ' leads';
 
           const infoData = document.getElementById('info-data');
-          if (infoData) {
-            infoData.textContent = formatDataBR(new Date());
-          }
+          if (infoData) infoData.textContent = formatDataBR(new Date());
+
           const infoUltimoLead = document.getElementById('info-ultimo-lead');
           if (infoUltimoLead) {
-            infoUltimoLead.textContent = ultimoLeadData ? formatDataBR(ultimoLeadData) : '-';
+            infoUltimoLead.textContent = ultimoLeadData
+              ? formatDataBR(ultimoLeadData)
+              : '-';
           }
 
           // FUNIL POR STATUS
@@ -625,8 +650,11 @@
             while (svgFunnel.firstChild) svgFunnel.removeChild(svgFunnel.firstChild);
             legendaFunnel.innerHTML = '';
 
-            const totalPorStatusFunnel = Object.values(porStatusLimpo).reduce((acc, v) => acc + v, 0) || 1;
-            const entriesFunnel = Object.entries(porStatusLimpo).sort((a, b) => b[1] - a[1]);
+            const totalPorStatusFunnel =
+              Object.values(porStatusLimpo).reduce((acc, v) => acc + v, 0) || 1;
+            const entriesFunnel = Object.entries(porStatusLimpo).sort(
+              (a, b) => b[1] - a[1]
+            );
 
             const cx = 100;
             const cy = 100;
@@ -662,7 +690,10 @@
                 'Z',
               ].join(' ');
 
-              const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              const path = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'path'
+              );
               path.setAttribute('d', pathData);
               path.setAttribute('fill', coresFunnel[idx % coresFunnel.length]);
               svgFunnel.appendChild(path);
@@ -690,14 +721,17 @@
               ativosPorStatus[s] = (ativosPorStatus[s] || 0) + 1;
             });
 
-            const totalAtivos = Object.values(ativosPorStatus).reduce((acc, v) => acc + v, 0);
+            const totalAtivos = Object.values(ativosPorStatus).reduce(
+              (acc, v) => acc + v,
+              0
+            );
             while (svg.firstChild) svg.removeChild(svg.firstChild);
             legenda.innerHTML = '';
-            if (!totalAtivos) {
-              return;
-            }
+            if (!totalAtivos) return;
 
-            const entries = Object.entries(ativosPorStatus).sort((a, b) => b[1] - a[1]);
+            const entries = Object.entries(ativosPorStatus).sort(
+              (a, b) => b[1] - a[1]
+            );
 
             const cx = 100;
             const cy = 100;
@@ -733,7 +767,10 @@
                 'Z',
               ].join(' ');
 
-              const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              const path = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'path'
+              );
               path.setAttribute('d', pathData);
               path.setAttribute('fill', cores[idx % cores.length]);
               svg.appendChild(path);
@@ -755,8 +792,13 @@
           const legendaEmp = document.getElementById('emp-legenda');
 
           if (svgEmp && legendaEmp) {
-            const totalEmp = Object.values(porEmpreendimento).reduce((acc, v) => acc + v, 0) || 1;
-            const entriesEmp = Object.entries(porEmpreendimento).sort((a, b) => b[1] - a[1]);
+            const totalEmp = Object.values(porEmpreendimento).reduce(
+              (acc, v) => acc + v,
+              0
+            ) || 1;
+            const entriesEmp = Object.entries(porEmpreendimento).sort(
+              (a, b) => b[1] - a[1]
+            );
 
             while (svgEmp.firstChild) svgEmp.removeChild(svgEmp.firstChild);
             legendaEmp.innerHTML = '';
@@ -795,7 +837,10 @@
                 'Z',
               ].join(' ');
 
-              const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              const path = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'path'
+              );
               path.setAttribute('d', pathData);
               path.setAttribute('fill', coresEmp[idx % coresEmp.length]);
               svgEmp.appendChild(path);
@@ -826,7 +871,6 @@
 
             const totalCom = somaValoresJ;
             const mediaCom = mediaValoresJ;
-
             const totalBase = (totalCom || 0) + (mediaCom || 0) || 1;
 
             const valores = [
@@ -857,7 +901,10 @@
                 'Z',
               ].join(' ');
 
-              const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              const path = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'path'
+              );
               path.setAttribute('d', pathData);
               path.setAttribute('fill', coresCom[idx % coresCom.length]);
               svgCom.appendChild(path);
@@ -874,8 +921,12 @@
           }
 
           // COMISSÃO REALIZADA
-          const svgComReal = document.getElementById('comissao-realizada-pizza-svg');
-          const legendaComReal = document.getElementById('comissao-realizada-legenda');
+          const svgComReal = document.getElementById(
+            'comissao-realizada-pizza-svg'
+          );
+          const legendaComReal = document.getElementById(
+            'comissao-realizada-legenda'
+          );
 
           if (svgComReal && legendaComReal) {
             while (svgComReal.firstChild) svgComReal.removeChild(svgComReal.firstChild);
@@ -899,7 +950,10 @@
               'Z',
             ].join(' ');
 
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const path = document.createElementNS(
+              'http://www.w3.org/2000/svg',
+              'path'
+            );
             path.setAttribute('d', pathData);
             path.setAttribute('fill', '#16a34a');
             svgComReal.appendChild(path);
