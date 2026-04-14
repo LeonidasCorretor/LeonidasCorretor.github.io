@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-final-csv-coluna-vazia-retangular-620-filtro" />
+  <meta name="debug" content="versao-1307-final-csv-coluna-vazia-retangular-620-filtro-top-emp" />
   <style>
     :root {
       --bg-main: #000000;
@@ -167,7 +167,7 @@
 
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 4px;
     }
 
@@ -417,6 +417,17 @@
             <span id="card-vendas-ganhas">– vendas ganhas</span>
           </div>
         </article>
+
+        <article class="card">
+          <div class="card-label">Top empreendimento</div>
+          <div class="card-main">
+            <div class="card-main-value" id="card-top-emp-qtd">–</div>
+            <div class="card-main-suffix">leads</div>
+          </div>
+          <div class="card-sub">
+            <strong id="card-top-emp-nome">–</strong>
+          </div>
+        </article>
       </section>
 
       <div class="layout-grid-top">
@@ -582,7 +593,23 @@
     let somaValoresJGlobal = 0;
     let mediaValoresJGlobal = 0;
     let somaValoresKGlobal = 0;
+    let porEmpreendimentoGlobal = {};
     let idxData, idxNome, idxOrigem, idxEmp, idxStatus, idxValor, idxValorJ, idxValorK;
+
+    function atualizarCardTopEmp() {
+      const entries = Object.entries(porEmpreendimentoGlobal).filter(
+        ([nome]) => nome && nome.trim() !== ''
+      );
+      if (!entries.length) {
+        document.getElementById('card-top-emp-qtd').textContent = '–';
+        document.getElementById('card-top-emp-nome').textContent = '–';
+        return;
+      }
+      entries.sort((a, b) => b[1] - a[1]);
+      const [nome, qtd] = entries[0];
+      document.getElementById('card-top-emp-qtd').textContent = qtd;
+      document.getElementById('card-top-emp-nome').textContent = nome;
+    }
 
     function recalcularCards(filterKey) {
       if (!dataRowsGlobal.length) return;
@@ -684,6 +711,7 @@
           let ativos = 0;
 
           const linhasAtivos = [];
+          const porEmpreendimento = {};
 
           dataRows.forEach((cols) => {
             const dataStr = (cols[idxData] || '').trim();
@@ -726,12 +754,16 @@
                 valor,
               });
             }
+
+            const emp = (cols[idxEmp] || 'Sem empreendimento').trim();
+            porEmpreendimento[emp] = (porEmpreendimento[emp] || 0) + 1;
           });
 
           linhasAtivosGlobal = linhasAtivos;
           somaValoresJGlobal = somaValoresJ;
           somaValoresKGlobal = somaValoresK;
           mediaValoresJGlobal = qtdeValoresJ > 0 ? somaValoresJ / qtdeValoresJ : 0;
+          porEmpreendimentoGlobal = porEmpreendimento;
 
           document.getElementById('info-ativos').textContent = ativos;
 
@@ -758,16 +790,12 @@
               : '-';
           }
 
+          atualizarCardTopEmp();
+
           const porStatusLimpo = {};
           linhasAtivos.forEach((linha) => {
             const s = linha.status || 'Sem status';
             porStatusLimpo[s] = (porStatusLimpo[s] || 0) + 1;
-          });
-
-          const porEmpreendimento = {};
-          dataRows.forEach((cols) => {
-            const emp = (cols[idxEmp] || 'Sem empreendimento').trim();
-            porEmpreendimento[emp] = (porEmpreendimento[emp] || 0) + 1;
           });
 
           // FUNIL POR STATUS (ativos)
@@ -1095,7 +1123,6 @@
           // inicia com filtro "Hoje"
           recalcularCards('today');
 
-          // listeners dos botões
           const filterButtons = document.querySelectorAll('.quick-filters button');
           filterButtons.forEach((btn) => {
             btn.addEventListener('click', () => {
