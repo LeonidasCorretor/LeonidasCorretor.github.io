@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-bg-black-tudo-ok" />
+  <meta name="debug" content="versao-1307-bg-black-col-telefone-ajustada" />
   <style>
     :root {
       --bg-main: #000000;
@@ -483,14 +483,17 @@
 
           const dataRows = rows.slice(1).filter((r) => r.some((c) => c && c.trim() !== ''));
 
-          const idxData   = 0;
-          const idxNome   = 1;
-          const idxOrigem = 3;
-          const idxEmp    = 4;
-          const idxStatus = 6;
-          const idxValor  = 7;
-          const idxValorJ = 8;
-          const idxValorK = 9;
+          // ATENÇÃO: índices ajustados com coluna Telefone entre Nome e Empreendimento
+          const idxData     = 0; // A
+          const idxNome     = 1; // B
+          const idxTelefone = 2; // C (não usamos por enquanto, mas fica mapeado)
+          const idxOrigem   = 3; // D
+          const idxEmp      = 4; // E
+          // se existir mais alguma coluna antes de Status, ajusta aqui
+          const idxStatus   = 6; // G (confere na planilha; se Status for F, muda para 5)
+          const idxValor    = 7; // H - Valor previsto (VGV)
+          const idxValorJ   = 8; // I - Comissão prevista
+          const idxValorK   = 9; // J - Comissão realizada
 
           const hoje = new Date();
           const trintaDiasAtras = new Date(hoje);
@@ -611,7 +614,7 @@
             infoUltimoLead.textContent = ultimoLeadData ? formatDataBR(ultimoLeadData) : '-';
           }
 
-          // FUNIL POR STATUS (todos)
+          // FUNIL POR STATUS
           const svgFunnel = document.getElementById('funnel-pizza-svg');
           const legendaFunnel = document.getElementById('funnel-legenda');
           if (svgFunnel && legendaFunnel) {
