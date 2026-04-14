@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-bg-black-indices-100pc-corretos" />
+  <meta name="debug" content="versao-1307-bg-black-parser-fixo" />
   <style>
     :root {
       --bg-main: #000000;
@@ -447,7 +447,11 @@
 
     function parseValorBR(valorStr) {
       if (!valorStr) return 0;
-      const cleaned = valorStr.replace(/[^0-9,]/g, '').replace('.', '').replace(',', '.');
+      // Ex.: "R$ 352.000,00" → "352000.00"
+      const cleaned = valorStr
+        .replace(/[^\d,.-]/g, '')       // tira R$, espaços etc.
+        .replace(/\./g, '')            // remove todos os pontos (separador de milhar)
+        .replace(/,/g, '.');           // vírgula decimal → ponto
       const num = parseFloat(cleaned);
       return isNaN(num) ? 0 : num;
     }
@@ -486,10 +490,10 @@
           // ORDEM REAL DAS COLUNAS:
           const idxData   = 0; // A: Data do Lead
           const idxNome   = 1; // B: Nome
-          const idxTel    = 2; // C: Telefone (não usado nas métricas)
+          const idxTel    = 2; // C: Telefone
           const idxOrigem = 3; // D: Origem
           const idxEmp    = 4; // E: Empreendimento
-          const idxCorr   = 5; // F: Corretor (não usado nas métricas)
+          const idxCorr   = 5; // F: Corretor
           const idxStatus = 6; // G: Status
           const idxValor  = 7; // H: Valor Previsto (VGV)
           const idxValorJ = 8; // I: Comissões (previstas)
