@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-final-csv-coluna-vazia-retangular-620-filtro-top-emp-nocache-vgv-fluid" />
+  <meta name="debug" content="versao-1307-final-csv-coluna-vazia-retangular-620-filtro-top-emp-nocache-vgv-fluid-comissao-card" />
   <style>
     :root {
       --bg-main: #000000;
@@ -205,7 +205,6 @@
       overflow-wrap: break-word;
     }
 
-    /* VGV potencial: um pouco menor para números muito grandes */
     #card-vgv {
       font-size: clamp(11px, 2.1vw, 16px);
     }
@@ -416,13 +415,13 @@
         </article>
 
         <article class="card">
-          <div class="card-label">Taxa de conversão</div>
+          <div class="card-label">Comissões realizadas</div>
           <div class="card-main">
-            <div class="card-main-value" id="card-conversao">–</div>
-            <div class="card-main-suffix">/ leads</div>
+            <div class="card-main-value" id="card-comissao-realizada">–</div>
+            <div class="card-main-suffix">no período</div>
           </div>
           <div class="card-sub">
-            <span id="card-vendas-ganhas">– vendas ganhas</span>
+            Soma da coluna <strong>Comissão realizada (J)</strong>
           </div>
         </article>
 
@@ -633,8 +632,8 @@
 
       let totalLeadsPeriodo = 0;
       let vgvPeriodo = 0;
-      let vendasGanhasPeriodo = 0;
       let leadsNovos30d = 0;
+      let comissaoRealizadaPeriodo = 0;
 
       dataRowsGlobal.forEach((cols) => {
         const dataStr = (cols[idxData] || '').trim();
@@ -656,31 +655,15 @@
         const valor = parseValorBR(cols[idxValor] || '');
         vgvPeriodo += valor;
 
-        const statusRaw = (cols[idxStatus] || '').trim();
-        const statusLower = statusRaw.toLowerCase();
-        if (
-          statusLower.includes('venda ganha') ||
-          statusLower.includes('assinado') ||
-          statusLower.includes('aprovado')
-        ) {
-          vendasGanhasPeriodo++;
-        }
+        const valorK = parseValorBR(cols[idxValorK] || '');
+        comissaoRealizadaPeriodo += valorK;
       });
 
       document.getElementById('card-total-leads').textContent = totalLeadsPeriodo;
       document.getElementById('card-leads-novos').textContent = leadsNovos30d;
       document.getElementById('card-vgv').textContent = formatValorBR(vgvPeriodo);
-
-      const taxaConversaoNum =
-        totalLeadsPeriodo > 0 ? (vendasGanhasPeriodo / totalLeadsPeriodo) * 100 : 0;
-      const taxaConversao = Number.isFinite(taxaConversaoNum)
-        ? taxaConversaoNum.toFixed(1)
-        : '0.0';
-      document.getElementById('card-conversao').textContent =
-        taxaConversao + '%';
-      document.getElementById('card-vendas-ganhas').textContent =
-        vendasGanhasPeriodo +
-        (vendasGanhasPeriodo === 1 ? ' venda ganha' : ' vendas ganhas');
+      document.getElementById('card-comissao-realizada').textContent =
+        formatValorBR(comissaoRealizadaPeriodo);
 
       const label = getLabelFromFilter(filterKey);
       document.getElementById('label-janela').textContent = label;
