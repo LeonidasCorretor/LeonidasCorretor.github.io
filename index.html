@@ -18,12 +18,12 @@
 <table>
   <thead>
     <tr>
-      <th>Nome</th>
+      <th>Data Atendimento</th>
+      <th>Nome Cliente</th>
       <th>Origem</th>
       <th>Empreendimento</th>
-      <th>Corretor</th>
-      <th>Status</th>
-      <th>Comissão realizada</th>
+      <th>Status Atendimento</th>
+      <th>Valor Comissão Realizada</th>
     </tr>
   </thead>
   <tbody id="dados-tabela"></tbody>
@@ -31,8 +31,10 @@
 
 <script>
 const urlParams = new URLSearchParams(window.location.search);
-const origemFiltro   = urlParams.get('origem');
-const campanhaFiltro = urlParams.get('campanha'); // pode ser Empreendimento
+const dataInicial = urlParams.get('data_inicial');
+const dataFinal = urlParams.get('data_final');
+const origemFiltro = urlParams.get('origem');
+const campanhaFiltro = urlParams.get('campanha');
 const corretorFiltro = urlParams.get('corretor');
 
 const limparFormatoMoeda = (valor) => {
@@ -50,21 +52,28 @@ const formatarMoedaBR = (valor) => {
   return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 };
 
+const parseDate = (dateStr) => {
+  const [dia, mes, ano] = dateStr.split('/');
+  return new Date(`${ano}-${mes}-${dia}`);
+};
+
+const dataInicialObj = dataInicial ? parseDate(dataInicial) : null;
+const dataFinalObj = dataFinal ? parseDate(dataFinal) : null;
+
 // CONTANDO COM A COLUNA A VAZIA NO CSV
-// 0: (A vazia), 1: Nome, 2: Telefone, 3: Origem, 4: Empreendimento,
-// 5: Corretor, 6: Status, 7: Valor Previsto, 8: Comissões, 9: Comissão realizada
-const idxNome        = 1;
-const idxOrigem      = 3;
-const idxEmpreendimento = 4;
-const idxCorretor    = 5;
-const idxStatus      = 6;
-const idxComissaoRealizada = 9;
+let idxData   = 1;  // B - Data Atendimento (2ª coluna do CSV)
+let idxNome   = 2;  // C - Nome Cliente    (3ª)
+let idxOrigem = 4;  // E - Origem          (5ª)
+let idxEmp    = 5;  // F - Empreendimento  (6ª)
+let idxStatus = 7;  // H - Status          (8ª)
+let idxValor  = 8;  // I - Valor previsto  (9ª) se usar
+let idxValorK = 10; // K - Comissão real.  (11ª)
 
 let negociosVenda = 0;
 let negociosAprovados = 0;
 let comissaoRealizadaTotal = 0;
 
-const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTyYxWwXeRZyTue9GuIZaAAEFxWC-1gKPnNev-P5odNDn7QPCWahW-l0JFWGmt8j64qdb2RrHNDQPoM/pub?gid=0&single=true&output=csv';
+const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRXo4hzpVQ3e5mBUVGGRQMqaFi7y6u0JXcfYESsOJ8iOjwZz3sI4D2TeF4PZxUiug/pub?gid=213507220&single=true&output=csv';
 
 fetch(url)
   .then(response => response.text())
@@ -78,41 +87,45 @@ fetch(url)
 
       const cols = row.split(',');
 
-      if (cols.length <= idxComissaoRealizada) return;
+      if (cols.length <= idxValorK) return;
 
-      const nome       = (cols[idxNome] || '').trim();
-      const origem     = (cols[idxOrigem] || '').trim();
-      const emp        = (cols[idxEmpreendimento] || '').trim();
-      const corretor   = (cols[idxCorretor] || '').trim();
-      const status     = (cols[idxStatus] || '').trim();
-      const comissaoBruto = (cols[idxComissaoRealizada] || '').trim();
+      const dataAtendimento   = cols[idxData]?.trim();
+      const nomeCliente       = cols[idxNome]?.trim();
+      const origem            = cols[idxOrigem]?.trim();
+      const empreendimento    = cols[idxEmp]?.trim();
+      const statusAtendimento = cols[idxStatus]?.trim();
+      const valorKBruto       = cols[idxValorK]?.trim();
 
-      if (!nome) return;
+      if (!dataAtendimento || !nomeCliente) return;
+
+      const dataAtendimentoObj = parseDate(dataAtendimento);
+      if (dataInicialObj && dataAtendimentoObj < dataInicialObj) return;
+      if (dataFinalObj && dataAtendimentoObj > dataFinalObj) return;
 
       if (origemFiltro && origemFiltro !== 'Todos' && origem !== origemFiltro) return;
-      if (corretorFiltro && corretorFiltro !== 'Todos' && corretor !== corretorFiltro) return;
-      if (campanhaFiltro && campanhaFiltro !== 'Todos' && emp !== campanhaFiltro) return;
+      if (corretorFiltro && corretorFiltro !== 'Todos' && nomeCliente !== corretorFiltro) return;
+      if (campanhaFiltro && campanhaFiltro !== 'Todos' && empreendimento !== campanhaFiltro) return;
 
-      const comissao = limparFormatoMoeda(comissaoBruto);
+      const valorK = limparFormatoMoeda(valorKBruto);
 
-      if (status === 'VENDA') {
+      if (statusAtendimento === 'VENDA') {
         negociosVenda++;
       }
 
-      if (status === 'Aprovado') {
+      if (statusAtendimento === 'Aprovado') {
         negociosAprovados++;
       }
 
-      comissaoRealizadaTotal += comissao;
+      comissaoRealizadaTotal += valorK;
 
       html += `
         <tr>
-          <td>${nome}</td>
+          <td>${dataAtendimento}</td>
+          <td>${nomeCliente}</td>
           <td>${origem}</td>
-          <td>${emp}</td>
-          <td>${corretor}</td>
-          <td>${status}</td>
-          <td>${formatarMoedaBR(comissao)}</td>
+          <td>${empreendimento}</td>
+          <td>${statusAtendimento}</td>
+          <td>${formatarMoedaBR(valorK)}</td>
         </tr>
       `;
     });
