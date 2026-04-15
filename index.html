@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-final-csv-coluna-vazia-retangular-620-filtro-top-emp" />
+  <meta name="debug" content="versao-1307-final-csv-coluna-vazia-retangular-620-filtro-top-emp-nocache" />
   <style>
     :root {
       --bg-main: #000000;
@@ -512,8 +512,13 @@
   </div>
 
   <script>
-    const csvUrl =
+    const baseCsvUrl =
       'https://docs.google.com/spreadsheets/d/e/2PACX-1vTyYxWwXeRZyTue9GuIZaAAEFxWC-1gKPnNev-P5odNDn7QPCWahW-l0JFWGmt8j64qdb2RrHNDQPoM/pub?gid=0&single=true&output=csv';
+
+    function getCsvUrl() {
+      // Query string único para “cache busting”
+      return baseCsvUrl + '&nocache=' + Date.now();
+    }
 
     function parseCSV(text) {
       const lines = text.split(/\r?\n/).filter((l) => l.trim() !== '');
@@ -674,7 +679,8 @@
       document.getElementById('label-janela').textContent = label;
     }
 
-    fetch(csvUrl)
+    // ---- carregamento do CSV com cache busting ----
+    fetch(getCsvUrl(), { cache: 'no-store' })
       .then((resp) => resp.text())
       .then((text) => {
         try {
