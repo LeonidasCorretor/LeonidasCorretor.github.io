@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-final-csv-retangular-620-filtro-top-emp-nocache-vgv-fluid-comissao-K-parser-fixo" />
+  <meta name="debug" content="versao-1307-final-csv-retangular-620-filtro-top-emp-nocache-vgv-fluid-comissao-K-parser-fixo-venda-ganha" />
   <style>
     :root {
       --bg-main: #000000;
@@ -421,7 +421,7 @@
             <div class="card-main-suffix">no período</div>
           </div>
           <div class="card-sub">
-            Soma da coluna <strong>Comissão realizada (K)</strong>
+            Soma da coluna <strong>Comissão realizada (K)</strong> com status <strong>Venda Ganha</strong>
           </div>
         </article>
 
@@ -505,7 +505,7 @@
 
             <div class="pizza-box">
               <div class="pizza-box-title">Comissão realizada</div>
-              <div class="pizza-box-sub">Total das comissões (coluna K)</div>
+              <div class="pizza-box-sub">Total das comissões (coluna K) com status "Venda Ganha"</div>
               <div class="pizza-row" id="comissao-realizada-pizza">
                 <svg id="comissao-realizada-pizza-svg" viewBox="0 0 200 200"></svg>
                 <div id="comissao-realizada-legenda"></div>
@@ -658,7 +658,10 @@
         vgvPeriodo += valor;
 
         const valorK = parseValorBR(cols[idxValorK] || '');
-        if (valorK > 0) {
+        const statusRaw = (cols[idxStatus] || '').trim();
+        const statusLower = statusRaw.toLowerCase();
+
+        if (valorK > 0 && statusLower === 'venda ganha') {
           comissaoRealizadaPeriodo += valorK;
         }
       });
@@ -732,16 +735,19 @@
             }
 
             const valorK = parseValorBR(cols[idxValorK] || '');
-            if (valorK > 0) {
+            const statusRaw = (cols[idxStatus] || '').trim();
+            const statusLower = statusRaw.toLowerCase();
+
+            // SOMA GLOBAL: só "Venda Ganha"
+            if (valorK > 0 && statusLower === 'venda ganha') {
               somaValoresK += valorK;
             }
 
-            const statusRaw = (cols[idxStatus] || '').trim();
-            const statusLower = statusRaw.toLowerCase();
+            const statusLowerAtivo = statusRaw.toLowerCase();
             if (
-              statusLower &&
-              !statusLower.includes('perdido') &&
-              !statusLower.includes('descartado')
+              statusLowerAtivo &&
+              !statusLowerAtivo.includes('perdido') &&
+              !statusLowerAtivo.includes('descartado')
             ) {
               ativos++;
               linhasAtivos.push({
@@ -1074,7 +1080,7 @@
             });
           }
 
-          // PIZZA COMISSÃO REALIZADA (coluna K)
+          // PIZZA COMISSÃO REALIZADA (coluna K) — agora só "Venda Ganha"
           const svgComReal = document.getElementById(
             'comissao-realizada-pizza-svg'
           );
@@ -1115,7 +1121,7 @@
             const legendaItem = document.createElement('div');
             legendaItem.innerHTML =
               `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:#16a34a;margin-right:4px;"></span>` +
-              `Total comissão realizada — ${formatValorBR(totalReal)} (100%)`;
+              `Total comissão realizada (Venda Ganha) — ${formatValorBR(totalReal)} (100%)`;
             legendaComReal.appendChild(legendaItem);
           }
 
