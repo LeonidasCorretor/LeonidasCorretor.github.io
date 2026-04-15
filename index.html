@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Funil — Corretor de Leônidas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-final-csv-retangular-620-filtro-top-emp-nocache-vgv-fluid-comissao-K" />
+  <meta name="debug" content="versao-1307-final-csv-retangular-620-filtro-top-emp-nocache-vgv-fluid-comissao-K-parser-fixo" />
   <style>
     :root {
       --bg-main: #000000;
@@ -534,6 +534,7 @@
       return lines.map((line) => line.split(sep));
     }
 
+    // Parser mais rígido para valores em BRL
     function parseValorBR(valorStr) {
       if (!valorStr) return 0;
       const cleaned = valorStr
@@ -543,6 +544,7 @@
         .replace(/[^\d,.-]/g, '')
         .replace(/\./g, '')
         .replace(/,/g, '.');
+      if (!cleaned || cleaned === '.' || cleaned === '-' || cleaned === '-.') return 0;
       const num = Number.parseFloat(cleaned);
       return Number.isFinite(num) ? num : 0;
     }
@@ -656,7 +658,9 @@
         vgvPeriodo += valor;
 
         const valorK = parseValorBR(cols[idxValorK] || '');
-        comissaoRealizadaPeriodo += valorK;
+        if (valorK > 0) {
+          comissaoRealizadaPeriodo += valorK;
+        }
       });
 
       document.getElementById('card-total-leads').textContent = totalLeadsPeriodo;
@@ -682,14 +686,14 @@
             .slice(1)
             .filter((r) => r.some((c) => c && c.trim() !== ''));
 
-          idxData   = 0;
-          idxNome   = 1;
-          idxOrigem = 3;
-          idxEmp    = 4;
-          idxStatus = 6;
-          idxValor  = 7; // H
-          idxValorJ = 8; // I - previstas
-          idxValorK = 9; // J/K na planilha? aqui é a 10ª coluna de dados
+          idxData   = 0; // data
+          idxNome   = 1; // nome
+          idxOrigem = 3; // origem
+          idxEmp    = 4; // empreendimento
+          idxStatus = 6; // status
+          idxValor  = 7; // H - valor previsto
+          idxValorJ = 8; // I - comissão prevista
+          idxValorK = 9; // K - comissão realizada
 
           dataRowsGlobal = dataRows;
 
@@ -1007,7 +1011,7 @@
             });
           }
 
-          // PIZZA COMISSÕES PREVISTAS (coluna J)
+          // PIZZA COMISSÕES PREVISTAS (coluna I)
           const svgCom = document.getElementById('comissao-pizza-svg');
           const legendaCom = document.getElementById('comissao-legenda');
 
