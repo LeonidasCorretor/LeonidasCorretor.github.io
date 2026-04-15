@@ -1,1142 +1,145 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <title>Funil — Corretor de Leônidas</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="debug" content="versao-1307-final-csv-retangular-620-filtro-top-emp-nocache-vgv-fluid-comissao-K-parser-fixo" />
-  <style>
-    :root {
-      --bg-main: #000000;
-      --bg-card: #0b1120;
-      --bg-card-alt: #020617;
-      --gold: #b08d33;
-      --gold-soft: #e0c57a;
-      --text-muted: #9ca3af;
-      --border-soft: #b08d33;
-    }
-
-    * { box-sizing: border-box; }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #000000;
-      color: #e5e7eb;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      overflow-y: auto;
-      font-size: 14px;
-    }
-
-    .wrapper {
-      width: 100%;
-      max-width: 960px;
-      margin: 4px auto;
-      padding: 4px 6px 6px;
-      background: #020617;
-      border-radius: 0;
-      box-shadow:
-        0 0 0 1px rgba(176, 141, 51, 0.9),
-        0 6px 14px rgba(0, 0, 0, 0.85);
-      display: flex;
-      flex-direction: column;
-      max-height: 620px;
-      overflow: hidden;
-    }
-
-    .wrapper-inner {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      min-height: 0;
-      overflow-y: auto;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 2px;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .brand { display: flex; align-items: center; gap: 6px; }
-
-    .brand-logo {
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid rgba(207, 181, 59, 0.5);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.9), 0 3px 8px rgba(0,0,0,0.9);
-      background: #020617;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand-logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .brand-text-main {
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gold);
-    }
-
-    .brand-text-sub {
-      font-size: 11px;
-      color: var(--text-muted);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .time-info {
-      text-align: right;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .time-info span { color: var(--gold-soft); }
-
-    h2.section-title {
-      margin: 2px 0 2px;
-      font-size: 11px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--gold);
-    }
-
-    .filters-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 2px;
-    }
-
-    .quick-filters {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-      font-size: 10px;
-    }
-
-    .quick-filters button {
-      border: 1px solid rgba(176, 141, 51, 0.6);
-      background: #020617;
-      color: #e5e7eb;
-      padding: 3px 6px;
-      border-radius: 999px;
-      font-size: 10px;
-      cursor: pointer;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .quick-filters button.active {
-      background: var(--gold);
-      color: #020617;
-      border-color: var(--gold);
-    }
-
-    .filters-label {
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
-    .filters-label span {
-      color: var(--gold-soft);
-    }
-
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 4px;
-    }
-
-    .card {
-      background: #020617;
-      border-radius: 6px;
-      padding: 4px 5px;
-      border: 1px solid var(--border-soft);
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.9);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--text-muted);
-      margin-bottom: 1px;
-    }
-
-    .card-main {
-      display: flex;
-      align-items: baseline;
-      gap: 3px;
-      margin-bottom: 1px;
-      min-height: 20px;
-    }
-
-    .card-main-value {
-      font-size: clamp(12px, 2.4vw, 18px);
-      font-weight: 700;
-      color: var(--gold-soft);
-      line-height: 1.1;
-      overflow-wrap: break-word;
-    }
-
-    #card-vgv {
-      font-size: clamp(11px, 2.1vw, 16px);
-    }
-
-    .card-main-suffix { font-size: 10px; color: var(--text-muted); }
-
-    .card-sub { font-size: 10px; color: var(--text-muted); }
-
-    .card-sub strong { color: var(--gold); font-weight: 500; }
-
-    .layout-grid-top {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-
-    .panel {
-      background: var(--bg-card-alt);
-      border-radius: 6px;
-      padding: 4px 5px;
-      border: 1px solid var(--border-soft);
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.9);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .panel-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 3px;
-    }
-
-    .panel-title {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--gold);
-    }
-
-    .panel-subtitle {
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
-    .footer-info {
-      margin-top: 2px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
-    .footer-info span { color: var(--gold-soft); }
-
-    .panel-pizzas {
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .pizza-card-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 4px;
-      flex: 1;
-      min-height: 0;
-    }
-
-    .pizza-box {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .pizza-box-title {
-      font-size: 10px;
-      color: var(--gold-soft);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .pizza-box-sub {
-      font-size: 9px;
-      color: var(--text-muted);
-    }
-
-    .pizza-row {
-      display:flex;
-      align-items:center;
-      gap:6px;
-      min-height: 0;
-    }
-
-    #funnel-pizza-svg,
-    #ativos-pizza-svg,
-    #emp-pizza-svg,
-    #comissao-pizza-svg,
-    #comissao-realizada-pizza-svg {
-      width: 80px;
-      height: 80px;
-    }
-
-    #funnel-legenda,
-    #ativos-legenda,
-    #emp-legenda,
-    #comissao-legenda,
-    #comissao-realizada-legenda {
-      font-size:9px;
-      color:#9ca3af;
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      max-height: 80px;
-      overflow: hidden;
-    }
-
-    @media (max-width: 1024px) {
-      .cards-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .layout-grid-top {
-        grid-template-columns: 1fr;
-      }
-      .filters-row {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .cards-grid {
-        grid-template-columns: 1fr;
-      }
-      .pizza-card-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="wrapper">
-    <div class="wrapper-inner">
-      <header>
-        <div class="brand">
-          <div class="brand-logo">
-            <img src="https://LeonidasCorretor.github.io/Logo (2) (1) (1).png"
-                 alt="Leonidas Corretor" />
-          </div>
-          <div>
-            <div class="brand-text-main">Corretor de Leônidas</div>
-            <div class="brand-text-sub">Funil de vendas · Imóveis Cury</div>
-          </div>
-        </div>
-        <div class="time-info">
-          Atualizado em <span id="info-data"></span><br />
-          Origem: <span>Google Sheets · Leads Cury</span>
-        </div>
-      </header>
-
-      <h2 class="section-title">Visão geral</h2>
-
-      <div class="filters-row">
-        <div class="quick-filters">
-          <button data-range="today" class="active">Hoje</button>
-          <button data-range="7d">7 dias</button>
-          <button data-range="30d">30 dias</button>
-          <button data-range="12m">12 meses</button>
-          <button data-range="all">Tudo</button>
-        </div>
-        <div class="filters-label">
-          Janela atual: <span id="label-janela">Hoje</span>
-        </div>
-      </div>
-
-      <section class="cards-grid">
-        <article class="card">
-          <div class="card-label">Leads no período</div>
-          <div class="card-main">
-            <div class="card-main-value" id="card-total-leads">–</div>
-          </div>
-          <div class="card-sub">
-            Filtro rápido <strong>por data</strong>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-label">Leads novos (30d)</div>
-          <div class="card-main">
-            <div class="card-main-value" id="card-leads-novos">–</div>
-          </div>
-          <div class="card-sub">
-            Sempre últimos <strong>30 dias</strong>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-label">VGV potencial</div>
-          <div class="card-main">
-            <div class="card-main-value" id="card-vgv">–</div>
-            <div class="card-main-suffix">no período</div>
-          </div>
-          <div class="card-sub">
-            Soma da coluna <strong>Valor previsto</strong>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-label">Comissões realizadas</div>
-          <div class="card-main">
-            <div class="card-main-value" id="card-comissao-realizada">–</div>
-            <div class="card-main-suffix">no período</div>
-          </div>
-          <div class="card-sub">
-            Soma da coluna <strong>Comissão realizada (K)</strong>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-label">Top empreendimento</div>
-          <div class="card-main">
-            <div class="card-main-value" id="card-top-emp-qtd">–</div>
-            <div class="card-main-suffix">leads</div>
-          </div>
-          <div class="card-sub">
-            <strong id="card-top-emp-nome">–</strong>
-          </div>
-        </article>
-      </section>
-
-      <div class="layout-grid-top">
-        <section class="panel">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">Resumo rápido</div>
-              <div class="panel-subtitle">Temperatura da base</div>
-            </div>
-          </div>
-          <div style="font-size:10px;color:var(--text-muted);display:flex;flex-direction:column;gap:2px;">
-            <p style="margin:0;">Leads ativos: <span id="info-ativos">–</span></p>
-            <p style="margin:0;">Média dos valores (coluna H): <span id="info-ticket-alto">–</span></p>
-            <p style="margin:0;">Total comissões previstas (coluna I): <span id="info-total-comissao">–</span></p>
-            <p style="margin:0;">Média dos valores (coluna I): <span id="info-media-j">–</span></p>
-            <p style="margin:0;">Último lead em: <span id="info-ultimo-lead">–</span></p>
-          </div>
-        </section>
-
-        <section class="panel panel-pizzas">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">Gráficos de pizza</div>
-              <div class="panel-subtitle">Funil, status, empreendimentos e comissões</div>
-            </div>
-          </div>
-
-          <div class="pizza-card-grid">
-            <div class="pizza-box">
-              <div class="pizza-box-title">Funil por status</div>
-              <div class="pizza-box-sub">Distribuição geral dos leads por etapa</div>
-              <div class="pizza-row" id="funnel-pizza">
-                <svg id="funnel-pizza-svg" viewBox="0 0 200 200"></svg>
-                <div id="funnel-legenda"></div>
-              </div>
-            </div>
-
-            <div class="pizza-box">
-              <div class="pizza-box-title">Ativos por status</div>
-              <div class="pizza-box-sub">Somente status ≠ "Perdido" / "Descartado"</div>
-              <div class="pizza-row" id="ativos-pizza">
-                <svg id="ativos-pizza-svg" viewBox="0 0 200 200"></svg>
-                <div id="ativos-legenda"></div>
-              </div>
-              <div class="footer-info" style="margin-top:2px;">
-                <div>Total exibido: <span id="info-total-linhas">– leads</span></div>
-                <div>Filtro: <span>status ≠ "Perdido"/"Descartado"</span></div>
-              </div>
-            </div>
-
-            <div class="pizza-box">
-              <div class="pizza-box-title">Leads por empreendimento</div>
-              <div class="pizza-box-sub">Contagem (todos os status)</div>
-              <div class="pizza-row" id="emp-pizza">
-                <svg id="emp-pizza-svg" viewBox="0 0 200 200"></svg>
-                <div id="emp-legenda"></div>
-              </div>
-            </div>
-
-            <div class="pizza-box">
-              <div class="pizza-box-title">Comissões previstas</div>
-              <div class="pizza-box-sub">Total x média (coluna I)</div>
-              <div class="pizza-row" id="comissao-pizza">
-                <svg id="comissao-pizza-svg" viewBox="0 0 200 200"></svg>
-                <div id="comissao-legenda"></div>
-              </div>
-            </div>
-
-            <div class="pizza-box">
-              <div class="pizza-box-title">Comissão realizada</div>
-              <div class="pizza-box-sub">Total das comissões (coluna K)</div>
-              <div class="pizza-row" id="comissao-realizada-pizza">
-                <svg id="comissao-realizada-pizza-svg" viewBox="0 0 200 200"></svg>
-                <div id="comissao-realizada-legenda"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-
+<div class="cards-container">
+  <div class="cards">
+    <div class="card">
+      <h3>Negócios com Venda</h3>
+      <p id="negocios-venda">0</p>
+    </div>
+    <div class="card">
+      <h3>Negócios Aprovados</h3>
+      <p id="negocios-aprovados">0</p>
+    </div>
+    <div class="card">
+      <h3>Comissão Realizada</h3>
+      <p id="comissao-realizada">R$ 0,00</p>
     </div>
   </div>
+</div>
 
-  <script>
-    const baseCsvUrl =
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vTyYxWwXeRZyTue9GuIZaAAEFxWC-1gKPnNev-P5odNDn7QPCWahW-l0JFWGmt8j64qdb2RrHNDQPoM/pub?gid=0&single=true&output=csv';
+<table>
+  <thead>
+    <tr>
+      <th>Data Atendimento</th>
+      <th>Nome Cliente</th>
+      <th>Origem</th>
+      <th>Empreendimento</th>
+      <th>Status Atendimento</th>
+      <th>Valor Comissão Realizada</th>
+    </tr>
+  </thead>
+  <tbody id="dados-tabela"></tbody>
+</table>
 
-    function getCsvUrl() {
-      return baseCsvUrl + '&nocache=' + Date.now();
-    }
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const dataInicial = urlParams.get('data_inicial');
+const dataFinal = urlParams.get('data_final');
+const origemFiltro = urlParams.get('origem');
+const campanhaFiltro = urlParams.get('campanha');
+const corretorFiltro = urlParams.get('corretor');
 
-    function parseCSV(text) {
-      const lines = text.split(/\r?\n/).filter((l) => l.trim() !== '');
-      if (!lines.length) return [];
-      const firstLine = lines[0];
-      const sep = firstLine.indexOf(';') !== -1 ? ';' : ',';
-      return lines.map((line) => line.split(sep));
-    }
+const limparFormatoMoeda = (valor) => {
+  if (!valor) return 0;
+  const limpo = valor
+    .toString()
+    .replace(/[R$\s]/g, '')
+    .replace(/\./g, '')
+    .replace(',', '.');
+  const numero = parseFloat(limpo);
+  return isNaN(numero) ? 0 : numero;
+};
 
-    // Parser mais rígido para valores em BRL
-    function parseValorBR(valorStr) {
-      if (!valorStr) return 0;
-      const cleaned = valorStr
-        .toString()
-        .replace(/\u00A0/g, ' ')
-        .trim()
-        .replace(/[^\d,.-]/g, '')
-        .replace(/\./g, '')
-        .replace(/,/g, '.');
-      if (!cleaned || cleaned === '.' || cleaned === '-' || cleaned === '-.') return 0;
-      const num = Number.parseFloat(cleaned);
-      return Number.isFinite(num) ? num : 0;
-    }
+const formatarMoedaBR = (valor) => {
+  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+};
 
-    function formatValorBR(num) {
-      if (!Number.isFinite(num) || num === 0) return 'R$ 0,00';
-      return 'R$ ' + num.toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-    }
+const parseDate = (dateStr) => {
+  const [dia, mes, ano] = dateStr.split('/');
+  return new Date(`${ano}-${mes}-${dia}`);
+};
 
-    function parseDataBR(dataStr) {
-      if (!dataStr) return null;
-      const partes = dataStr.split('/');
-      if (partes.length !== 3) return null;
-      const d = new Date(
-        parseInt(partes[2], 10),
-        parseInt(partes[1], 10) - 1,
-        parseInt(partes[0], 10)
-      );
-      return isNaN(d.getTime()) ? null : d;
-    }
+const dataInicialObj = dataInicial ? parseDate(dataInicial) : null;
+const dataFinalObj = dataFinal ? parseDate(dataFinal) : null;
 
-    function formatDataBR(date) {
-      return date.toLocaleDateString('pt-BR');
-    }
+// CONTANDO COM A COLUNA A VAZIA NO CSV
+let idxData   = 1;  // B - Data Atendimento (2ª coluna do CSV)
+let idxNome   = 2;  // C - Nome Cliente    (3ª)
+let idxOrigem = 4;  // E - Origem          (5ª)
+let idxEmp    = 5;  // F - Empreendimento  (6ª)
+let idxStatus = 7;  // H - Status          (8ª)
+let idxValor  = 8;  // I - Valor previsto  (9ª) se usar
+let idxValorK = 10; // K - Comissão real.  (11ª)
 
-    function getRangeFromFilter(filter) {
-      const hoje = new Date();
-      let inicio = null;
-      if (filter === 'today') {
-        inicio = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
-      } else if (filter === '7d') {
-        inicio = new Date(hoje);
-        inicio.setDate(hoje.getDate() - 7);
-      } else if (filter === '30d') {
-        inicio = new Date(hoje);
-        inicio.setDate(hoje.getDate() - 30);
-      } else if (filter === '12m') {
-        inicio = new Date(hoje);
-        inicio.setFullYear(hoje.getFullYear() - 1);
-      } else if (filter === 'all') {
-        inicio = null;
+let negociosVenda = 0;
+let negociosAprovados = 0;
+let comissaoRealizadaTotal = 0;
+
+const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRXo4hzpVQ3e5mBUVGGRQMqaFi7y6u0JXcfYESsOJ8iOjwZz3sI4D2TeF4PZxUiug/pub?gid=213507220&single=true&output=csv';
+
+fetch(url)
+  .then(response => response.text())
+  .then(data => {
+    const rows = data.split('\n').slice(1); // pula cabeçalho
+    const tbody = document.getElementById('dados-tabela');
+    let html = '';
+
+    rows.forEach(row => {
+      if (!row.trim()) return;
+
+      const cols = row.split(',');
+
+      if (cols.length <= idxValorK) return;
+
+      const dataAtendimento   = cols[idxData]?.trim();
+      const nomeCliente       = cols[idxNome]?.trim();
+      const origem            = cols[idxOrigem]?.trim();
+      const empreendimento    = cols[idxEmp]?.trim();
+      const statusAtendimento = cols[idxStatus]?.trim();
+      const valorKBruto       = cols[idxValorK]?.trim();
+
+      if (!dataAtendimento || !nomeCliente) return;
+
+      const dataAtendimentoObj = parseDate(dataAtendimento);
+      if (dataInicialObj && dataAtendimentoObj < dataInicialObj) return;
+      if (dataFinalObj && dataAtendimentoObj > dataFinalObj) return;
+
+      if (origemFiltro && origemFiltro !== 'Todos' && origem !== origemFiltro) return;
+      if (corretorFiltro && corretorFiltro !== 'Todos' && nomeCliente !== corretorFiltro) return;
+      if (campanhaFiltro && campanhaFiltro !== 'Todos' && empreendimento !== campanhaFiltro) return;
+
+      const valorK = limparFormatoMoeda(valorKBruto);
+
+      if (statusAtendimento === 'VENDA') {
+        negociosVenda++;
       }
-      return { inicio, fim: hoje };
-    }
 
-    function getLabelFromFilter(filter) {
-      if (filter === 'today') return 'Hoje';
-      if (filter === '7d') return 'Últimos 7 dias';
-      if (filter === '30d') return 'Últimos 30 dias';
-      if (filter === '12m') return 'Últimos 12 meses';
-      return 'Todos os registros';
-    }
-
-    let dataRowsGlobal = [];
-    let linhasAtivosGlobal = [];
-    let somaValoresJGlobal = 0;
-    let mediaValoresJGlobal = 0;
-    let somaValoresKGlobal = 0;
-    let porEmpreendimentoGlobal = {};
-    let idxData, idxNome, idxOrigem, idxEmp, idxStatus, idxValor, idxValorJ, idxValorK;
-
-    function atualizarCardTopEmp() {
-      const entries = Object.entries(porEmpreendimentoGlobal).filter(
-        ([nome]) => nome && nome.trim() !== ''
-      );
-      if (!entries.length) {
-        document.getElementById('card-top-emp-qtd').textContent = '–';
-        document.getElementById('card-top-emp-nome').textContent = '–';
-        return;
+      if (statusAtendimento === 'Aprovado') {
+        negociosAprovados++;
       }
-      entries.sort((a, b) => b[1] - a[1]);
-      const [nome, qtd] = entries[0];
-      document.getElementById('card-top-emp-qtd').textContent = qtd;
-      document.getElementById('card-top-emp-nome').textContent = nome;
-    }
 
-    function recalcularCards(filterKey) {
-      if (!dataRowsGlobal.length) return;
-
-      const { inicio, fim } = getRangeFromFilter(filterKey);
-      const hoje = new Date();
-      const trintaDiasAtras = new Date(hoje);
-      trintaDiasAtras.setDate(hoje.getDate() - 30);
-
-      let totalLeadsPeriodo = 0;
-      let vgvPeriodo = 0;
-      let leadsNovos30d = 0;
-      let comissaoRealizadaPeriodo = 0;
-
-      dataRowsGlobal.forEach((cols) => {
-        const dataStr = (cols[idxData] || '').trim();
-        const dt = parseDataBR(dataStr);
-
-        if (dt && dt >= trintaDiasAtras && dt <= hoje) {
-          leadsNovos30d++;
-        }
-
-        let dentroJanela = true;
-        if (inicio) {
-          if (!dt || dt < inicio || dt > fim) dentroJanela = false;
-        }
-
-        if (!dentroJanela) return;
-
-        totalLeadsPeriodo++;
-
-        const valor = parseValorBR(cols[idxValor] || '');
-        vgvPeriodo += valor;
-
-        const valorK = parseValorBR(cols[idxValorK] || '');
-        if (valorK > 0) {
-          comissaoRealizadaPeriodo += valorK;
-        }
-      });
-
-      document.getElementById('card-total-leads').textContent = totalLeadsPeriodo;
-      document.getElementById('card-leads-novos').textContent = leadsNovos30d;
-      document.getElementById('card-vgv').textContent = formatValorBR(vgvPeriodo);
-      document.getElementById('card-comissao-realizada').textContent =
-        formatValorBR(comissaoRealizadaPeriodo);
-
-      const label = getLabelFromFilter(filterKey);
-      document.getElementById('label-janela').textContent = label;
-    }
-
-    fetch(getCsvUrl(), { cache: 'no-store' })
-      .then((resp) => resp.text())
-      .then((text) => {
-        try {
-          const rows = parseCSV(text);
-          if (!rows || rows.length <= 1) return;
-
-          const normalizedRows = rows.map((r) => r.slice(1));
-          const header = normalizedRows[0];
-          const dataRows = normalizedRows
-            .slice(1)
-            .filter((r) => r.some((c) => c && c.trim() !== ''));
-
-          idxData   = 0; // data
-          idxNome   = 1; // nome
-          idxOrigem = 3; // origem
-          idxEmp    = 4; // empreendimento
-          idxStatus = 6; // status
-          idxValor  = 7; // H - valor previsto
-          idxValorJ = 8; // I - comissão prevista
-          idxValorK = 9; // K - comissão realizada
-
-          dataRowsGlobal = dataRows;
-
-          const hoje = new Date();
-          const trintaDiasAtras = new Date(hoje);
-          trintaDiasAtras.setDate(hoje.getDate() - 30);
-
-          let ultimoLeadData = null;
-          let somaValores = 0;
-          let qtdeValores = 0;
-          let somaValoresJ = 0;
-          let qtdeValoresJ = 0;
-          let somaValoresK = 0;
-          let ativos = 0;
-
-          const linhasAtivos = [];
-          const porEmpreendimento = {};
-
-          dataRows.forEach((cols) => {
-            const dataStr = (cols[idxData] || '').trim();
-            const dt = parseDataBR(dataStr);
-            if (dt) {
-              if (!ultimoLeadData || dt > ultimoLeadData) ultimoLeadData = dt;
-            }
-
-            const valor = parseValorBR(cols[idxValor] || '');
-            if (valor > 0) {
-              somaValores += valor;
-              qtdeValores++;
-            }
-
-            const valorJ = parseValorBR(cols[idxValorJ] || '');
-            if (valorJ > 0) {
-              somaValoresJ += valorJ;
-              qtdeValoresJ++;
-            }
-
-            const valorK = parseValorBR(cols[idxValorK] || '');
-            if (valorK > 0) {
-              somaValoresK += valorK;
-            }
-
-            const statusRaw = (cols[idxStatus] || '').trim();
-            const statusLower = statusRaw.toLowerCase();
-            if (
-              statusLower &&
-              !statusLower.includes('perdido') &&
-              !statusLower.includes('descartado')
-            ) {
-              ativos++;
-              linhasAtivos.push({
-                data: dt ? formatDataBR(dt) : dataStr || '-',
-                nome: cols[idxNome] || '-',
-                origem: cols[idxOrigem] || '-',
-                emp: cols[idxEmp] || '-',
-                status: statusRaw || '-',
-                valor,
-              });
-            }
-
-            const emp = (cols[idxEmp] || 'Sem empreendimento').trim();
-            porEmpreendimento[emp] = (porEmpreendimento[emp] || 0) + 1;
-          });
-
-          linhasAtivosGlobal = linhasAtivos;
-          somaValoresJGlobal = somaValoresJ;
-          somaValoresKGlobal = somaValoresK;
-          mediaValoresJGlobal = qtdeValoresJ > 0 ? somaValoresJ / qtdeValoresJ : 0;
-          porEmpreendimentoGlobal = porEmpreendimento;
-
-          document.getElementById('info-ativos').textContent = ativos;
-
-          const mediaValores =
-            qtdeValores > 0 ? somaValores / qtdeValores : 0;
-          document.getElementById('info-ticket-alto').textContent =
-            formatValorBR(mediaValores);
-
-          document.getElementById('info-media-j').textContent =
-            formatValorBR(mediaValoresJGlobal);
-          document.getElementById('info-total-comissao').textContent =
-            formatValorBR(somaValoresJGlobal);
-
-          document.getElementById('info-total-linhas').textContent =
-            ativos + ' leads';
-
-          const infoData = document.getElementById('info-data');
-          if (infoData) infoData.textContent = formatDataBR(new Date());
-
-          const infoUltimoLead = document.getElementById('info-ultimo-lead');
-          if (infoUltimoLead) {
-            infoUltimoLead.textContent = ultimoLeadData
-              ? formatDataBR(ultimoLeadData)
-              : '-';
-          }
-
-          atualizarCardTopEmp();
-
-          const porStatusLimpo = {};
-          linhasAtivos.forEach((linha) => {
-            const s = linha.status || 'Sem status';
-            porStatusLimpo[s] = (porStatusLimpo[s] || 0) + 1;
-          });
-
-          // PIZZA FUNIL (ativos)
-          const svgFunnel = document.getElementById('funnel-pizza-svg');
-          const legendaFunnel = document.getElementById('funnel-legenda');
-          if (svgFunnel && legendaFunnel) {
-            while (svgFunnel.firstChild) svgFunnel.removeChild(svgFunnel.firstChild);
-            legendaFunnel.innerHTML = '';
-
-            const totalPorStatusFunnel =
-              Object.values(porStatusLimpo).reduce((acc, v) => acc + v, 0) || 1;
-            const entriesFunnel = Object.entries(porStatusLimpo).sort(
-              (a, b) => b[1] - a[1]
-            );
-
-            const cx = 100;
-            const cy = 100;
-            const r = 80;
-            let anguloAcumuladoFunnel = -Math.PI / 2;
-
-            const coresFunnel = [
-              '#8a6a24',
-              '#9b7a2c',
-              '#b08d33',
-              '#c19a3a',
-              '#d1ad4a',
-              '#e0c060',
-              '#f0d47a'
-            ];
-
-            entriesFunnel.forEach(([statusLabel, qtd], idx) => {
-              const frac = qtd / totalPorStatusFunnel;
-              const angulo = frac * 2 * Math.PI;
-              const anguloFinal = anguloAcumuladoFunnel + angulo;
-
-              const x1 = cx + r * Math.cos(anguloAcumuladoFunnel);
-              const y1 = cy + r * Math.sin(anguloAcumuladoFunnel);
-              const x2 = cx + r * Math.cos(anguloFinal);
-              const y2 = cy + r * Math.sin(anguloFinal);
-
-              const grandeArco = angulo > Math.PI ? 1 : 0;
-
-              const pathData = [
-                `M ${cx} ${cy}`,
-                `L ${x1} ${y1}`,
-                `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
-                'Z',
-              ].join(' ');
-
-              const path = document.createElementNS(
-                'http://www.w3.org/2000/svg',
-                'path'
-              );
-              path.setAttribute('d', pathData);
-              path.setAttribute('fill', coresFunnel[idx % coresFunnel.length]);
-              svgFunnel.appendChild(path);
-
-              const perc = Math.round(frac * 100);
-              const item = document.createElement('div');
-              const cor = coresFunnel[idx % coresFunnel.length];
-              item.innerHTML =
-                `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:${cor};margin-right:4px;"></span>` +
-                `${statusLabel} — ${qtd} (${perc}%)`;
-              legendaFunnel.appendChild(item);
-
-              anguloAcumuladoFunnel = anguloFinal;
-            });
-          }
-
-          // PIZZA ATIVOS
-          const svg = document.getElementById('ativos-pizza-svg');
-          const legenda = document.getElementById('ativos-legenda');
-
-          if (svg && legenda) {
-            const ativosPorStatus = {};
-            linhasAtivos.forEach((linha) => {
-              const s = linha.status || 'Sem status';
-              ativosPorStatus[s] = (ativosPorStatus[s] || 0) + 1;
-            });
-
-            const totalAtivos = Object.values(ativosPorStatus).reduce(
-              (acc, v) => acc + v,
-              0
-            );
-            while (svg.firstChild) svg.removeChild(svg.firstChild);
-            legenda.innerHTML = '';
-            if (!totalAtivos) return;
-
-            const entries = Object.entries(ativosPorStatus).sort(
-              (a, b) => b[1] - a[1]
-            );
-
-            const cx = 100;
-            const cy = 100;
-            const r = 80;
-            let anguloAcumulado = -Math.PI / 2;
-
-            const cores = [
-              '#8a6a24',
-              '#9b7a2c',
-              '#b08d33',
-              '#c19a3a',
-              '#d1ad4a',
-              '#e0c060',
-              '#f0d47a'
-            ];
-
-            entries.forEach(([statusLabel, qtd], idx) => {
-              const frac = qtd / totalAtivos;
-              const angulo = frac * 2 * Math.PI;
-              const anguloFinal = anguloAcumulado + angulo;
-
-              const x1 = cx + r * Math.cos(anguloAcumulado);
-              const y1 = cy + r * Math.sin(anguloAcumulado);
-              const x2 = cx + r * Math.cos(anguloFinal);
-              const y2 = cy + r * Math.sin(anguloFinal);
-
-              const grandeArco = angulo > Math.PI ? 1 : 0;
-
-              const pathData = [
-                `M ${cx} ${cy}`,
-                `L ${x1} ${y1}`,
-                `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
-                'Z',
-              ].join(' ');
-
-              const path = document.createElementNS(
-                'http://www.w3.org/2000/svg',
-                'path'
-              );
-              path.setAttribute('d', pathData);
-              path.setAttribute('fill', cores[idx % cores.length]);
-              svg.appendChild(path);
-
-              const item = document.createElement('div');
-              const cor = cores[idx % cores.length];
-              const perc = Math.round(frac * 100);
-              item.innerHTML =
-                `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:${cor};margin-right:4px;"></span>` +
-                `${statusLabel} — ${qtd} (${perc}%)`;
-              legenda.appendChild(item);
-
-              anguloAcumulado = anguloFinal;
-            });
-          }
-
-          // PIZZA EMPREENDIMENTOS
-          const svgEmp = document.getElementById('emp-pizza-svg');
-          const legendaEmp = document.getElementById('emp-legenda');
-
-          if (svgEmp && legendaEmp) {
-            const totalEmp = Object.values(porEmpreendimento).reduce(
-              (acc, v) => acc + v,
-              0
-            ) || 1;
-            const entriesEmp = Object.entries(porEmpreendimento).sort(
-              (a, b) => b[1] - a[1]
-            );
-
-            while (svgEmp.firstChild) svgEmp.removeChild(svgEmp.firstChild);
-            legendaEmp.innerHTML = '';
-
-            const cx = 100;
-            const cy = 100;
-            const r = 80;
-            let anguloAcumuladoEmp = -Math.PI / 2;
-
-            const coresEmp = [
-              '#8a6a24',
-              '#9b7a2c',
-              '#b08d33',
-              '#c19a3a',
-              '#d1ad4a',
-              '#e0c060',
-              '#f0d47a'
-            ];
-
-            entriesEmp.forEach(([empLabel, qtd], idx) => {
-              const frac = qtd / totalEmp;
-              const angulo = frac * 2 * Math.PI;
-              const anguloFinal = anguloAcumuladoEmp + angulo;
-
-              const x1 = cx + r * Math.cos(anguloAcumuladoEmp);
-              const y1 = cy + r * Math.sin(anguloAcumuladoEmp);
-              const x2 = cx + r * Math.cos(anguloFinal);
-              const y2 = cy + r * Math.sin(anguloFinal);
-
-              const grandeArco = angulo > Math.PI ? 1 : 0;
-
-              const pathData = [
-                `M ${cx} ${cy}`,
-                `L ${x1} ${y1}`,
-                `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
-                'Z',
-              ].join(' ');
-
-              const path = document.createElementNS(
-                'http://www.w3.org/2000/svg',
-                'path'
-              );
-              path.setAttribute('d', pathData);
-              path.setAttribute('fill', coresEmp[idx % coresEmp.length]);
-              svgEmp.appendChild(path);
-
-              const item = document.createElement('div');
-              const cor = coresEmp[idx % coresEmp.length];
-              const perc = Math.round(frac * 100);
-              item.innerHTML =
-                `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:${cor};margin-right:4px;"></span>` +
-                `${empLabel} — ${qtd} (${perc}%)`;
-              legendaEmp.appendChild(item);
-
-              anguloAcumuladoEmp = anguloFinal;
-            });
-          }
-
-          // PIZZA COMISSÕES PREVISTAS (coluna I)
-          const svgCom = document.getElementById('comissao-pizza-svg');
-          const legendaCom = document.getElementById('comissao-legenda');
-
-          if (svgCom && legendaCom) {
-            while (svgCom.firstChild) svgCom.removeChild(svgCom.firstChild);
-            legendaCom.innerHTML = '';
-
-            const cx = 100;
-            const cy = 100;
-            const r = 80;
-
-            const totalCom = somaValoresJGlobal;
-            const mediaCom = mediaValoresJGlobal;
-            const totalBase = (totalCom || 0) + (mediaCom || 0) || 1;
-
-            const valores = [
-              { label: 'Total comissões previstas', valor: totalCom },
-              { label: 'Média das comissões', valor: mediaCom }
-            ];
-
-            const coresCom = ['#b08d33', '#4b5563'];
-
-            let anguloAcumuladoCom = -Math.PI / 2;
-
-            valores.forEach((item, idx) => {
-              const frac = item.valor / totalBase;
-              const angulo = frac * 2 * Math.PI;
-              const anguloFinal = anguloAcumuladoCom + angulo;
-
-              const x1 = cx + r * Math.cos(anguloAcumuladoCom);
-              const y1 = cy + r * Math.sin(anguloAcumuladoCom);
-              const x2 = cx + r * Math.cos(anguloFinal);
-              const y2 = cy + r * Math.sin(anguloFinal);
-
-              const grandeArco = angulo > Math.PI ? 1 : 0;
-
-              const pathData = [
-                `M ${cx} ${cy}`,
-                `L ${x1} ${y1}`,
-                `A ${r} ${r} 0 ${grandeArco} 1 ${x2} ${y2}`,
-                'Z',
-              ].join(' ');
-
-              const path = document.createElementNS(
-                'http://www.w3.org/2000/svg',
-                'path'
-              );
-              path.setAttribute('d', pathData);
-              path.setAttribute('fill', coresCom[idx % coresCom.length]);
-              svgCom.appendChild(path);
-
-              const perc = Math.round(frac * 100);
-              const legendaItem = document.createElement('div');
-              legendaItem.innerHTML =
-                `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:${coresCom[idx % coresCom.length]};margin-right:4px;"></span>` +
-                `${item.label} — ${formatValorBR(item.valor)} (${perc}%)`;
-              legendaCom.appendChild(legendaItem);
-
-              anguloAcumuladoCom = anguloFinal;
-            });
-          }
-
-          // PIZZA COMISSÃO REALIZADA (coluna K)
-          const svgComReal = document.getElementById(
-            'comissao-realizada-pizza-svg'
-          );
-          const legendaComReal = document.getElementById(
-            'comissao-realizada-legenda'
-          );
-
-          if (svgComReal && legendaComReal) {
-            while (svgComReal.firstChild) svgComReal.removeChild(svgComReal.firstChild);
-            legendaComReal.innerHTML = '';
-
-            const cx = 100;
-            const cy = 100;
-            const r = 80;
-
-            const totalReal = somaValoresKGlobal || 0;
-
-            const x1 = cx + r * Math.cos(-Math.PI / 2);
-            const y1 = cy + r * Math.sin(-Math.PI / 2);
-            const x2 = cx + r * Math.cos(3 * Math.PI / 2);
-            const y2 = cy + r * Math.sin(3 * Math.PI / 2);
-
-            const pathData = [
-              `M ${cx} ${cy}`,
-              `L ${x1} ${y1}`,
-              `A ${r} ${r} 0 1 1 ${x2} ${y2}`,
-              'Z',
-            ].join(' ');
-
-            const path = document.createElementNS(
-              'http://www.w3.org/2000/svg',
-              'path'
-            );
-            path.setAttribute('d', pathData);
-            path.setAttribute('fill', '#16a34a');
-            svgComReal.appendChild(path);
-
-            const legendaItem = document.createElement('div');
-            legendaItem.innerHTML =
-              `<span style="display:inline-block;width:9px;height:9px;border-radius:999px;background:#16a34a;margin-right:4px;"></span>` +
-              `Total comissão realizada — ${formatValorBR(totalReal)} (100%)`;
-            legendaComReal.appendChild(legendaItem);
-          }
-
-          recalcularCards('today');
-
-          const filterButtons = document.querySelectorAll('.quick-filters button');
-          filterButtons.forEach((btn) => {
-            btn.addEventListener('click', () => {
-              filterButtons.forEach((b) => b.classList.remove('active'));
-              btn.classList.add('active');
-              const range = btn.getAttribute('data-range');
-              recalcularCards(range);
-            });
-          });
-        } catch (e) {
-          console.error('Erro ao processar dashboard', e);
-        }
-      })
-      .catch((err) => {
-        console.error('Erro ao carregar CSV', err);
-      });
-  </script>
-</body>
-</html>
+      comissaoRealizadaTotal += valorK;
+
+      html += `
+        <tr>
+          <td>${dataAtendimento}</td>
+          <td>${nomeCliente}</td>
+          <td>${origem}</td>
+          <td>${empreendimento}</td>
+          <td>${statusAtendimento}</td>
+          <td>${formatarMoedaBR(valorK)}</td>
+        </tr>
+      `;
+    });
+
+    tbody.innerHTML = html;
+    atualizarCards();
+  })
+  .catch(error => {
+    console.error('Erro ao carregar os dados:', error);
+  });
+
+function atualizarCards() {
+  document.getElementById('negocios-venda').textContent = negociosVenda;
+  document.getElementById('negocios-aprovados').textContent = negociosAprovados;
+  document.getElementById('comissao-realizada').textContent = formatarMoedaBR(comissaoRealizadaTotal);
+}
+</script>
